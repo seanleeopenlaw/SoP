@@ -372,15 +372,52 @@ function ProfilePageContent() {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground">Birthday (MM-DD)</label>
-                <input
-                  type="text"
-                  value={toMonthDay(profile.birthday)}
-                  onChange={(e) => handleBasicInfoChange('birthday', fromMonthDay(e.target.value))}
-                  placeholder="MM-DD"
-                  maxLength={5}
-                  className="w-full bg-input border border-border text-foreground px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                />
+                <label className="block text-sm font-medium text-foreground">Birthday</label>
+                <div className="flex gap-2">
+                  <select
+                    value={profile.birthday ? new Date(profile.birthday).getMonth() + 1 : ''}
+                    onChange={(e) => {
+                      const month = e.target.value;
+                      const day = profile.birthday ? new Date(profile.birthday).getDate() : 1;
+                      if (month) {
+                        const year = new Date().getFullYear();
+                        handleBasicInfoChange('birthday', `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+                      }
+                    }}
+                    className="flex-1 bg-input border border-border text-foreground px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  >
+                    <option value="">Month</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                  </select>
+                  <select
+                    value={profile.birthday ? new Date(profile.birthday).getDate() : ''}
+                    onChange={(e) => {
+                      const day = e.target.value;
+                      const month = profile.birthday ? new Date(profile.birthday).getMonth() + 1 : 1;
+                      if (day) {
+                        const year = new Date().getFullYear();
+                        handleBasicInfoChange('birthday', `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+                      }
+                    }}
+                    className="flex-1 bg-input border border-border text-foreground px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                  >
+                    <option value="">Day</option>
+                    {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                      <option key={day} value={day}>{day}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
           </SectionCard>
