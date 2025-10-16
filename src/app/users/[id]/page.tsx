@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Info } from 'lucide-react';
+import { Info, Link } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { ChronotypeSelector } from '@/components/profile/ChronotypeSelector';
 import { BigFiveSelector } from '@/components/profile/BigFiveSelector';
 import { GoalsSection } from '@/components/profile/GoalsSection';
@@ -69,6 +70,11 @@ export default function UserProfilePage() {
 
   const profileId = params.id as string;
 
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(window.location.href);
+    toast.success('Link copied to clipboard!');
+  };
+
   // Use React Query for data fetching with caching
   const { data: profile, isLoading } = useQuery({
     queryKey: ['profile', profileId],
@@ -129,9 +135,19 @@ export default function UserProfilePage() {
               <p className="text-sm text-muted-foreground">{profile.email}</p>
             </div>
           </div>
-          <span className="px-3 py-1 text-xs font-semibold bg-primary/10 text-primary rounded">
-            READ-ONLY
-          </span>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={handleCopyLink}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-primary hover:text-primary/80 hover:bg-primary/10 rounded transition-colors"
+              aria-label="Copy link"
+            >
+              <Link className="w-4 h-4" />
+              Copy Link
+            </button>
+            <span className="px-3 py-1 text-xs font-semibold bg-primary/10 text-primary rounded">
+              READ-ONLY
+            </span>
+          </div>
         </div>
 
         {/* Basic Info, Core Values, Character Strengths */}
