@@ -203,24 +203,27 @@ function AdminImportPageContent() {
                   <>
                     <span className="text-muted-foreground">•</span>
                     <p className="text-sm text-muted-foreground">{session.email}</p>
-                    <button
+                    <Button
                       onClick={handleLogout}
-                      className="text-sm text-destructive hover:text-destructive/80 transition-colors font-medium flex items-center gap-1"
+                      variant="ghost"
+                      size="sm"
+                      className="text-destructive hover:text-destructive/80 h-auto p-0"
                     >
                       <LogOut className="w-3.5 h-3.5" />
                       Logout
-                    </button>
+                    </Button>
                   </>
                 )}
               </div>
             </div>
-            <button
+            <Button
               onClick={() => router.push('/users')}
-              className="w-full md:w-auto bg-muted text-foreground px-6 py-2 rounded-md hover:bg-muted/80 transition-colors font-medium flex items-center justify-center gap-2"
+              variant="secondary"
+              className="w-full md:w-auto"
             >
               <Users className="w-4 h-4" />
               Team Directory
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -237,14 +240,13 @@ function AdminImportPageContent() {
               <p className="text-sm text-muted-foreground mb-4">
                 Download the Excel template to fill in user profile data. The template includes sample data and all required columns.
               </p>
-              <button
+              <Button
                 onClick={handleDownloadTemplate}
                 disabled={downloading}
-                className="bg-primary text-primary-foreground px-6 py-2 rounded-md hover:bg-primary/90 transition-colors font-medium flex items-center gap-2 disabled:opacity-50"
               >
                 <Download className="w-4 h-4" />
                 {downloading ? 'Downloading...' : 'Download Template'}
-              </button>
+              </Button>
               {templateInfo && (
                 <div className="text-xs text-muted-foreground mt-3">
                   Version {templateInfo.version} • Updated: {templateInfo.updatedAt}
@@ -352,14 +354,13 @@ function AdminImportPageContent() {
           {/* Action Buttons */}
           {file && (
             <div className="flex gap-3 mt-6">
-              <button
+              <Button
                 onClick={handleUpload}
                 disabled={uploading}
+                variant={resetDatabase ? "destructive" : "default"}
                 className={cn(
-                  "flex-1 px-6 py-3 rounded-md transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50",
-                  resetDatabase
-                    ? "bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    : "bg-brand-indigo text-white hover:bg-brand-indigo-dark"
+                  "flex-1",
+                  !resetDatabase && "bg-brand-indigo hover:bg-brand-indigo-dark"
                 )}
               >
                 {uploading ? (
@@ -373,14 +374,14 @@ function AdminImportPageContent() {
                     {resetDatabase ? 'Reset & Import' : 'Import Users'}
                   </>
                 )}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleReset}
                 disabled={uploading}
-                className="bg-muted text-foreground px-6 py-3 rounded-md hover:bg-muted/80 transition-colors font-medium disabled:opacity-50"
+                variant="secondary"
               >
                 Clear
-              </button>
+              </Button>
             </div>
           )}
         </SectionCard>
@@ -402,18 +403,20 @@ function AdminImportPageContent() {
                 </div>
               </div>
               <div className="flex gap-3 mt-6">
-                <button
+                <Button
                   onClick={() => setShowResetConfirm(false)}
-                  className="flex-1 bg-muted text-foreground px-4 py-2 rounded-md hover:bg-muted/80 transition-colors font-medium"
+                  variant="secondary"
+                  className="flex-1"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={handleUpload}
-                  className="flex-1 bg-destructive text-destructive-foreground px-4 py-2 rounded-md hover:bg-destructive/90 transition-colors font-medium"
+                  variant="destructive"
+                  className="flex-1"
                 >
                   Yes, Reset & Import
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -503,12 +506,12 @@ function AdminImportPageContent() {
             </div>
 
             {/* Import Another File */}
-            <button
+            <Button
               onClick={handleReset}
-              className="w-full bg-primary text-primary-foreground px-6 py-3 rounded-md hover:bg-primary/90 transition-colors font-medium"
+              className="w-full"
             >
               Import Another File
-            </button>
+            </Button>
           </SectionCard>
         )}
       </div>

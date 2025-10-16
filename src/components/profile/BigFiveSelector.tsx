@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useMemo, memo } from 'react';
 import { cn } from '@/lib/utils';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import ResizableTraitModal from './ResizableTraitModal';
 import { BIG_FIVE_TEMPLATE, createDefaultGroup, getSubtraitImagePath, type TraitLevel, type BigFiveGroup } from '@/lib/big-five-config';
 import { UI_CONSTANTS } from '@/lib/constants';
@@ -162,14 +164,13 @@ export function BigFiveSelector({ data, onChange, isReadOnly = false }: BigFiveS
               <div className="mb-4 flex items-center gap-2">
                 <div className="flex gap-1 flex-1" role="tablist" aria-label={`${template.name} level`}>
                   {TRAIT_LEVELS.map((level) => (
-                    <button
+                    <Button
                       key={level}
                       onClick={() => handleGroupLevelChange(groupIndex, level)}
+                      variant={groupData?.level === level ? 'default' : 'outline'}
                       className={cn(
-                        'flex-1 py-2 px-3 rounded-md font-semibold transition-colors border text-sm',
-                        groupData?.level === level
-                          ? 'bg-primary text-primary-foreground border-primary'
-                          : 'bg-muted text-muted-foreground border-border hover:bg-muted/80'
+                        'flex-1 font-semibold text-sm h-9',
+                        groupData?.level === level && 'bg-primary text-primary-foreground'
                       )}
                       role="tab"
                       aria-selected={groupData?.level === level}
@@ -177,10 +178,10 @@ export function BigFiveSelector({ data, onChange, isReadOnly = false }: BigFiveS
                       type="button"
                     >
                       {level}
-                    </button>
+                    </Button>
                   ))}
                 </div>
-                <input
+                <Input
                   type="number"
                   min={MIN_SCORE}
                   max={MAX_SCORE}
@@ -198,7 +199,7 @@ export function BigFiveSelector({ data, onChange, isReadOnly = false }: BigFiveS
                       handleGroupScoreChange(groupIndex, clampedValue);
                     }
                   }}
-                  className="w-20 px-2 py-1 text-sm border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-20 text-sm"
                   placeholder="000"
                 />
               </div>
@@ -244,14 +245,14 @@ export function BigFiveSelector({ data, onChange, isReadOnly = false }: BigFiveS
                       <div className="flex items-center gap-1">
                         <div className="flex gap-1" role="tablist" aria-label={`${subtraitName} level`}>
                           {TRAIT_LEVELS.map((level) => (
-                            <button
+                            <Button
                               key={level}
                               onClick={() => handleSubtraitLevelChange(groupIndex, subtraitIndex, level)}
+                              variant={subtrait?.level === level ? 'default' : 'outline'}
+                              size="icon"
                               className={cn(
-                                'w-8 h-8 rounded-md text-xs font-semibold transition-colors border',
-                                subtrait?.level === level
-                                  ? 'bg-primary text-primary-foreground border-primary'
-                                  : 'bg-muted text-muted-foreground border-border hover:bg-muted/80'
+                                'w-8 h-8 text-xs font-semibold',
+                                subtrait?.level === level && 'bg-primary text-primary-foreground'
                               )}
                               role="tab"
                               aria-selected={subtrait?.level === level}
@@ -259,10 +260,10 @@ export function BigFiveSelector({ data, onChange, isReadOnly = false }: BigFiveS
                               type="button"
                             >
                               {level.charAt(0)}
-                            </button>
+                            </Button>
                           ))}
                         </div>
-                        <input
+                        <Input
                           type="number"
                           min={MIN_SCORE}
                           max={MAX_SCORE}
@@ -280,7 +281,7 @@ export function BigFiveSelector({ data, onChange, isReadOnly = false }: BigFiveS
                               handleSubtraitScoreChange(groupIndex, subtraitIndex, clampedValue);
                             }
                           }}
-                          className="w-14 px-1 py-1 text-xs border border-border rounded-md focus:outline-none focus:ring-1 focus:ring-primary"
+                          className="w-14 text-xs h-8"
                           placeholder="000"
                         />
                       </div>

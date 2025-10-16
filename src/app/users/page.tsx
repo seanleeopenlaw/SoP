@@ -88,13 +88,15 @@ export default function UsersPage() {
               {isLoggedIn && userEmail && (
                 <div className="flex items-center gap-3 mt-1">
                   <p className="text-sm text-muted-foreground">{userEmail}</p>
-                  <button
+                  <Button
                     onClick={handleLogout}
-                    className="text-sm text-destructive hover:text-destructive/80 transition-colors font-medium flex items-center gap-1"
+                    variant="ghost"
+                    size="sm"
+                    className="text-destructive hover:text-destructive/80 h-auto p-0"
                   >
                     <LogOut className="w-3.5 h-3.5" />
                     Logout
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>

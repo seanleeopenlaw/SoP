@@ -25,7 +25,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import type { Subtrait, BigFiveGroup, Profile } from '@/types/profile';
 
 function ProfilePageContent() {
@@ -234,13 +235,15 @@ function ProfilePageContent() {
               <h1 className="text-2xl font-bold text-foreground">{profile?.name || 'Your Profile'}</h1>
               <div className="flex items-center gap-3 mt-1">
                 <p className="text-sm text-muted-foreground">{profile?.email}</p>
-                <button
+                <Button
                   onClick={handleLogout}
-                  className="text-sm text-destructive hover:text-destructive/80 transition-colors font-medium flex items-center gap-1"
+                  variant="ghost"
+                  size="sm"
+                  className="text-destructive hover:text-destructive/80 h-auto p-0"
                 >
                   <LogOut className="w-3.5 h-3.5" />
                   Logout
-                </button>
+                </Button>
               </div>
             </div>
             <div className="flex gap-2">
@@ -309,13 +312,15 @@ function ProfilePageContent() {
               <div className="flex flex-col h-full">
                 <div className="flex items-center gap-2 mb-3">
                   <h3 className="text-xl font-bold text-foreground">Core Values</h3>
-                  <button
+                  <Button
                     onClick={() => setInfoModal({ title: 'Core Values', imageUrl: '/core-values.png' })}
-                    className="text-primary hover:text-primary/80 transition-colors"
+                    variant="ghost"
+                    size="icon"
+                    className="h-auto w-auto p-0 text-primary hover:text-primary/80"
                     aria-label="Learn more about Core Values"
                   >
                     <Info className="w-5 h-5" />
-                  </button>
+                  </Button>
                 </div>
                 <div className="space-y-1 text-sm">
                   {coreValues.filter(v => v).map((value, i) => (
@@ -331,13 +336,15 @@ function ProfilePageContent() {
               <div className="flex flex-col h-full">
                 <div className="flex items-center gap-2 mb-3">
                   <h3 className="text-xl font-bold text-character-strength">Character Strengths</h3>
-                  <button
+                  <Button
                     onClick={() => setInfoModal({ title: 'Character Strengths', imageUrl: '/strengths.png' })}
-                    className="text-primary hover:text-primary/80 transition-colors"
+                    variant="ghost"
+                    size="icon"
+                    className="h-auto w-auto p-0 text-primary hover:text-primary/80"
                     aria-label="Learn more about Character Strengths"
                   >
                     <Info className="w-5 h-5" />
-                  </button>
+                  </Button>
                 </div>
                 <div className="space-y-1 text-sm">
                   {characterStrengths.filter(s => s).map((strength, i) => (
@@ -358,29 +365,29 @@ function ProfilePageContent() {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground">Name</label>
-                <input
+                <Label htmlFor="name">Name</Label>
+                <Input
+                  id="name"
                   type="text"
                   value={profile.name || ''}
                   onChange={(e) => handleBasicInfoChange('name', e.target.value)}
                   placeholder="Your full name"
-                  className="w-full bg-input border border-border text-foreground px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground">Team</label>
-                <input
+                <Label htmlFor="team">Team</Label>
+                <Input
+                  id="team"
                   type="text"
                   value={profile.team || ''}
                   onChange={(e) => handleBasicInfoChange('team', e.target.value)}
                   placeholder="Your team"
-                  className="w-full bg-input border border-border text-foreground px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground">Birthday</label>
+                <Label>Birthday</Label>
                 <div className="flex gap-3">
                   <Select
                     value={profile.birthday ? String(new Date(profile.birthday).getMonth() + 1) : ''}
@@ -440,13 +447,15 @@ function ProfilePageContent() {
           <SectionCard size="compact">
             <div className="flex items-center gap-2 mb-4">
               <h2 className="text-xl font-bold text-foreground">Core Values</h2>
-              <button
+              <Button
                 onClick={() => setInfoModal({ title: 'Core Values', imageUrl: '/core-values.png' })}
-                className="text-primary hover:text-primary/80 transition-colors"
+                variant="ghost"
+                size="icon"
+                className="h-auto w-auto p-0 text-primary hover:text-primary/80"
                 aria-label="Learn more about Core Values"
               >
                 <Info className="w-5 h-5" />
-              </button>
+              </Button>
             </div>
             <TextListInput
               label="List your top 5 core values"
@@ -460,13 +469,15 @@ function ProfilePageContent() {
           <SectionCard size="compact">
             <div className="flex items-center gap-2 mb-4">
               <h2 className="text-xl font-bold text-character-strength">Character Strengths</h2>
-              <button
+              <Button
                 onClick={() => setInfoModal({ title: 'Character Strengths', imageUrl: '/strengths.png' })}
-                className="text-primary hover:text-primary/80 transition-colors"
+                variant="ghost"
+                size="icon"
+                className="h-auto w-auto p-0 text-primary hover:text-primary/80"
                 aria-label="Learn more about Character Strengths"
               >
                 <Info className="w-5 h-5" />
-              </button>
+              </Button>
             </div>
             <TextListInput
               label="List your top 5 signature strengths"
@@ -478,8 +489,6 @@ function ProfilePageContent() {
         </div>
         )}
 
-        <Separator className="my-8" />
-
         {/* Chronotype */}
         <section>
           <h2 className="text-2xl font-semibold text-foreground mb-4">Chronotype</h2>
@@ -490,8 +499,6 @@ function ProfilePageContent() {
           />
         </section>
 
-        <Separator className="my-8" />
-
         {/* Big 5 Personality */}
         <section>
           <h2 className="text-2xl font-semibold text-foreground mb-4">Big 5 Factor of Personality</h2>
@@ -501,8 +508,6 @@ function ProfilePageContent() {
             isReadOnly={isReadOnly}
           />
         </section>
-
-        <Separator className="my-8" />
 
         {/* Goals */}
         <GoalsSection

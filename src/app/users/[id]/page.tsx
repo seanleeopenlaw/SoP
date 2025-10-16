@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Info, Link } from 'lucide-react';
+import { Info, Link, Check } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { ChronotypeSelector } from '@/components/profile/ChronotypeSelector';
 import { BigFiveSelector } from '@/components/profile/BigFiveSelector';
 import { GoalsSection } from '@/components/profile/GoalsSection';
@@ -68,12 +69,23 @@ export default function UserProfilePage() {
   const params = useParams();
   const router = useRouter();
   const [infoModal, setInfoModal] = useState<{ title: string; imageUrl: string } | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const profileId = params.id as string;
 
   const handleCopyLink = () => {
+    if (linkCopied) return;
+
     navigator.clipboard.writeText(window.location.href);
-    toast.success('Link copied to clipboard!');
+    setLinkCopied(true);
+    toast.success('Link copied to clipboard!', {
+      duration: 2000,
+    });
+
+    // Reset after toast duration
+    setTimeout(() => {
+      setLinkCopied(false);
+    }, 2000);
   };
 
   // Use React Query for data fetching with caching
@@ -107,47 +119,63 @@ export default function UserProfilePage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => router.push('/users')}
-              className="p-2 hover:bg-accent rounded-md transition-colors"
-              aria-label="Back to directory"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
+      {/* Sticky Header */}
+      <div className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+            <div className="flex items-center gap-4 flex-1">
+              <Button
+                onClick={() => router.push('/users')}
+                variant="ghost"
+                size="icon"
+                className="p-2"
+                aria-label="Back to directory"
               >
-                <line x1="19" y1="12" x2="5" y2="12" />
-                <polyline points="12 19 5 12 12 5" />
-              </svg>
-            </button>
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">{profile.name}</h1>
-              <p className="text-sm text-muted-foreground">{profile.email}</p>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <line x1="19" y1="12" x2="5" y2="12" />
+                  <polyline points="12 19 5 12 12 5" />
+                </svg>
+              </Button>
+              <div>
+                <h1 className="text-2xl font-bold text-foreground">{profile.name}</h1>
+                <p className="text-sm text-muted-foreground">{profile.email}</p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleCopyLink}
+                variant="secondary"
+                className="w-full md:w-auto"
+                disabled={linkCopied}
+              >
+                {linkCopied ? (
+                  <>
+                    <Check className="w-4 h-4" />
+                    Link Copied
+                  </>
+                ) : (
+                  <>
+                    <Link className="w-4 h-4" />
+                    Copy Link
+                  </>
+                )}
+              </Button>
+              <Badge variant="outline" className="self-center whitespace-nowrap">READ-ONLY</Badge>
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleCopyLink}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-primary hover:text-primary/80 hover:bg-primary/10 rounded transition-colors"
-              aria-label="Copy link"
-            >
-              <Link className="w-4 h-4" />
-              Copy Link
-            </button>
-            <Badge variant="secondary">READ-ONLY</Badge>
-          </div>
         </div>
+      </div>
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-4">
 
         {/* Basic Info, Core Values, Character Strengths */}
         <SectionCard className="mb-6">
@@ -177,13 +205,15 @@ export default function UserProfilePage() {
             <div className="flex flex-col h-full">
               <div className="flex items-center gap-2 mb-3">
                 <h3 className="text-xl font-bold text-foreground">Core Values</h3>
-                <button
+                <Button
                   onClick={() => setInfoModal({ title: 'Core Values', imageUrl: '/core-values.png' })}
-                  className="text-primary hover:text-primary/80 transition-colors"
+                  variant="ghost"
+                  size="icon"
+                  className="h-auto w-auto p-0 text-primary hover:text-primary/80"
                   aria-label="Learn more about Core Values"
                 >
                   <Info className="w-5 h-5" />
-                </button>
+                </Button>
               </div>
               <div className="space-y-1 text-sm">
                 {profile.coreValues?.values && profile.coreValues.values.length > 0 ? (
@@ -200,13 +230,15 @@ export default function UserProfilePage() {
             <div className="flex flex-col h-full">
               <div className="flex items-center gap-2 mb-3">
                 <h3 className="text-xl font-bold text-character-strength">Character Strengths</h3>
-                <button
+                <Button
                   onClick={() => setInfoModal({ title: 'Character Strengths', imageUrl: '/strengths.png' })}
-                  className="text-primary hover:text-primary/80 transition-colors"
+                  variant="ghost"
+                  size="icon"
+                  className="h-auto w-auto p-0 text-primary hover:text-primary/80"
                   aria-label="Learn more about Character Strengths"
                 >
                   <Info className="w-5 h-5" />
-                </button>
+                </Button>
               </div>
               <div className="space-y-1 text-sm">
                 {profile.characterStrengths?.strengths && profile.characterStrengths.strengths.length > 0 ? (

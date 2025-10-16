@@ -6,6 +6,9 @@ import Image from 'next/image';
 import { Users, Shield } from 'lucide-react';
 import { setSession, isAuthenticated, isAdminUser } from '@/lib/auth-utils';
 import { toast } from 'sonner';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   const [email, setEmail] = useState('');
@@ -94,17 +97,17 @@ export default function Home() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-2">
-            <label htmlFor="email" className="block text-sm font-medium text-foreground">
+            <Label htmlFor="email">
               Email Address
-            </label>
-            <input
+            </Label>
+            <Input
               id="email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="your.email@company.com"
               required
-              className="w-full bg-input border border-border text-foreground px-4 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-ring transition-shadow"
+              className="h-11"
             />
           </div>
 
@@ -114,13 +117,13 @@ export default function Home() {
             </div>
           )}
 
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-brand-indigo text-white px-6 py-3 rounded-md hover:bg-brand-indigo-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+            className="w-full bg-brand-indigo hover:bg-brand-indigo-dark h-11"
           >
             {loading ? 'Loading your profile...' : 'Continue'}
-          </button>
+          </Button>
 
           <p className="text-xs text-muted-foreground text-center mt-2">
             Your email is only used to identify your profile. No password required.
@@ -128,13 +131,14 @@ export default function Home() {
         </form>
 
         <div className="pt-4 border-t border-border">
-          <button
+          <Button
             onClick={() => router.push('/users')}
-            className="w-full bg-accent text-foreground px-6 py-3 rounded-md hover:bg-accent/80 transition-colors font-medium flex items-center justify-center gap-2"
+            variant="secondary"
+            className="w-full h-11"
           >
             <Users className="w-5 h-5" />
             View Team Directory
-          </button>
+          </Button>
         </div>
       </div>
     </main>

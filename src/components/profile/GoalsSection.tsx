@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 interface GoalsSectionProps {
   goals?: {
@@ -111,41 +114,41 @@ export function GoalsSection({ goals, onChange, isReadOnly = false }: GoalsSecti
 
       <div className="space-y-4">
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-foreground">
+          <Label htmlFor="goals-period">
             Period (e.g., &quot;January 2025&quot; or &quot;2025&quot;)
-          </label>
-          <input
+          </Label>
+          <Input
+            id="goals-period"
             type="text"
             value={period}
             onChange={(e) => handlePeriodChange(e.target.value)}
             placeholder="e.g., January 2025"
-            className="w-full bg-input border border-border text-foreground px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-ring"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-foreground">
+          <Label htmlFor="goals-professional">
             Some of my professional goals for this period are:
-          </label>
-          <textarea
+          </Label>
+          <Textarea
+            id="goals-professional"
             value={professionalGoals}
             onChange={(e) => handleProfessionalGoalsChange(e.target.value)}
             placeholder="Enter your professional goals..."
             rows={4}
-            className="w-full bg-input border border-border text-foreground px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-ring resize-vertical"
           />
         </div>
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-foreground">
+          <Label htmlFor="goals-personal">
             Some of my personal goals for this period are:
-          </label>
-          <textarea
+          </Label>
+          <Textarea
+            id="goals-personal"
             value={personalGoals}
             onChange={(e) => handlePersonalGoalsChange(e.target.value)}
             placeholder="Enter your personal goals..."
             rows={4}
-            className="w-full bg-input border border-border text-foreground px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-ring resize-vertical"
           />
         </div>
       </div>
