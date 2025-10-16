@@ -556,23 +556,7 @@ async function updateExistingUser(
     });
   }
 
-  // Upsert Goals
-  if (row.Goals_Period) {
-    await prisma.goals.upsert({
-      where: { profileId },
-      create: {
-        profileId,
-        period: row.Goals_Period,
-        professionalGoals: row.Goals_Professional || null,
-        personalGoals: row.Goals_Personal || null,
-      },
-      update: {
-        period: row.Goals_Period,
-        professionalGoals: row.Goals_Professional || null,
-        personalGoals: row.Goals_Personal || null,
-      },
-    });
-  }
+  // Goals feature removed - not in current schema
 }
 
 export async function importUsersFromExcel(
