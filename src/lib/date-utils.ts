@@ -1,5 +1,5 @@
 /**
- * Format date to Australian format (dd/mm/yyyy)
+ * Format date to Australian format (dd Month) - no year
  */
 export function formatDateAU(date: string | Date | null | undefined): string {
   if (!date) return 'Not set';
@@ -8,11 +8,11 @@ export function formatDateAU(date: string | Date | null | undefined): string {
 
   if (isNaN(d.getTime())) return 'Invalid date';
 
-  const day = String(d.getDate()).padStart(2, '0');
-  const month = String(d.getMonth() + 1).padStart(2, '0');
-  const year = d.getFullYear();
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const day = d.getDate();
+  const month = months[d.getMonth()];
 
-  return `${day}/${month}/${year}`;
+  return `${day} ${month}`;
 }
 
 /**
