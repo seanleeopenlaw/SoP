@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { profileUpdateSchema } from '@/validators/profile';
-import { ChronotypeAnimal, TraitLevel, Prisma } from '@prisma/client';
+import { ChronotypeAnimal, Prisma } from '@prisma/client';
 import { transformProfileToBigFiveData } from '@/lib/big-five-config';
 
 // Enable caching for this route - revalidate every 60 seconds
