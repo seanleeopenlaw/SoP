@@ -11,11 +11,13 @@ import ResizableTraitModal from '@/components/profile/ResizableTraitModal';
 import { ChronotypeLoadingSpinner } from '@/components/LoadingSpinner';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { cn } from '@/lib/utils';
-import { formatDateAU, toInputDate } from '@/lib/date-utils';
+import { formatDateAU, toInputDate, toMonthDay, fromMonthDay } from '@/lib/date-utils';
 import { isValidEmail, isValidChronotype } from '@/lib/validators';
 import { getSession, clearSession, isAdminUser } from '@/lib/auth-utils';
 import { transformBigFiveGroupToDatabase } from '@/lib/big-five-config';
 import { toast } from "sonner";
+import { Button } from '@/components/ui/button';
+import { SectionCard } from '@/components/ui/section-card';
 import type { Subtrait, BigFiveGroup, Profile } from '@/types/profile';
 
 function ProfilePageContent() {
@@ -234,36 +236,40 @@ function ProfilePageContent() {
               </div>
             </div>
             <div className="flex gap-2">
-              <button
+              <Button
                 onClick={() => router.push('/users')}
-                className="w-full md:w-auto bg-muted text-foreground px-6 py-2 rounded-md hover:bg-muted/80 transition-colors font-medium flex items-center justify-center gap-2"
+                variant="secondary"
+                className="w-full md:w-auto"
               >
                 <Users className="w-4 h-4" />
                 Team Directory
-              </button>
+              </Button>
               {isAdminUser() && (
-                <button
+                <Button
                   onClick={() => router.push('/admin/import')}
-                  className="w-full md:w-auto bg-muted text-foreground px-6 py-2 rounded-md hover:bg-muted/80 transition-colors font-medium"
+                  variant="secondary"
+                  className="w-full md:w-auto"
                 >
                   Admin
-                </button>
+                </Button>
               )}
               {isReadOnly ? (
-                <button
+                <Button
                   onClick={() => setIsReadOnly(false)}
-                  className="w-full md:w-auto bg-brand-indigo text-white px-6 py-2 rounded-md hover:bg-brand-indigo-dark transition-colors font-medium"
+                  variant="brand"
+                  className="w-full md:w-auto"
                 >
                   Edit Profile
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
                   onClick={handleSave}
                   disabled={saving || !profile?.id}
-                  className="w-full md:w-auto bg-brand-indigo text-white px-6 py-2 rounded-md hover:bg-brand-indigo-dark transition-colors disabled:opacity-50 font-medium flex items-center justify-center gap-2"
+                  variant="brand"
+                  className="w-full md:w-auto"
                 >
                   {saving ? 'Saving...' : 'Save Profile'}
-                </button>
+                </Button>
               )}
             </div>
           </div>
@@ -274,7 +280,7 @@ function ProfilePageContent() {
 
         {/* Basic Information, Core Values, Character Strengths */}
         {isReadOnly ? (
-          <section className="border-2 rounded-lg p-6 border-border bg-card max-w-7xl">
+          <SectionCard className="max-w-7xl">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
               {/* Basic Information */}
               <div className="flex flex-col h-full">
@@ -335,11 +341,11 @@ function ProfilePageContent() {
                 </div>
               </div>
             </div>
-          </section>
+          </SectionCard>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Basic Information */}
-          <section className="border-2 rounded-lg p-4 border-border bg-card">
+          <SectionCard size="compact">
             <h2 className="text-xl font-bold mb-4">Basic Information</h2>
 
             <div className="space-y-4">
@@ -366,19 +372,21 @@ function ProfilePageContent() {
               </div>
 
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-foreground">Birthday</label>
+                <label className="block text-sm font-medium text-foreground">Birthday (MM-DD)</label>
                 <input
-                  type="date"
-                  value={toInputDate(profile.birthday)}
-                  onChange={(e) => handleBasicInfoChange('birthday', e.target.value)}
+                  type="text"
+                  value={toMonthDay(profile.birthday)}
+                  onChange={(e) => handleBasicInfoChange('birthday', fromMonthDay(e.target.value))}
+                  placeholder="MM-DD"
+                  maxLength={5}
                   className="w-full bg-input border border-border text-foreground px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 />
               </div>
             </div>
-          </section>
+          </SectionCard>
 
           {/* Core Values */}
-          <section className="border-2 rounded-lg p-4 border-border bg-card">
+          <SectionCard size="compact">
             <div className="flex items-center gap-2 mb-4">
               <h2 className="text-xl font-bold text-foreground">Core Values</h2>
               <button
@@ -395,10 +403,10 @@ function ProfilePageContent() {
               onChange={handleCoreValuesChange}
               placeholderPrefix="Value"
             />
-          </section>
+          </SectionCard>
 
           {/* Character Strengths */}
-          <section className="border-2 rounded-lg p-4 border-border bg-card">
+          <SectionCard size="compact">
             <div className="flex items-center gap-2 mb-4">
               <h2 className="text-xl font-bold text-character-strength">Character Strengths</h2>
               <button
@@ -415,7 +423,7 @@ function ProfilePageContent() {
               onChange={handleCharacterStrengthsChange}
               placeholderPrefix="Strength"
             />
-          </section>
+          </SectionCard>
         </div>
         )}
 

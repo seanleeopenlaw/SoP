@@ -8,6 +8,7 @@ import { useQuery } from '@tanstack/react-query';
 import { UserCard } from '@/components/users/UserCard';
 import { ChronotypeLoadingSpinner } from '@/components/LoadingSpinner';
 import { SearchInput } from '@/components/ui/search-input';
+import { Button } from '@/components/ui/button';
 import { isAdminUser, isAuthenticated, getSession, clearSession } from '@/lib/auth-utils';
 import { calculateProfileCompleteness } from '@/lib/profile-utils';
 import type { Profile } from '@/types/profile';
@@ -98,7 +99,7 @@ export default function UsersPage() {
               )}
             </div>
           </div>
-          <button
+          <Button
             onClick={() => {
               if (!isLoggedIn) {
                 router.push('/');
@@ -108,7 +109,7 @@ export default function UsersPage() {
                 router.push('/profile');
               }
             }}
-            className="bg-brand-indigo text-white px-6 py-2 rounded-md hover:bg-brand-indigo-dark transition-colors font-medium flex items-center gap-2"
+            variant="brand"
           >
             {!isLoggedIn ? (
               <>
@@ -126,7 +127,7 @@ export default function UsersPage() {
                 My Profile
               </>
             )}
-          </button>
+          </Button>
         </div>
 
         {!isLoading && profiles.length > 0 && (

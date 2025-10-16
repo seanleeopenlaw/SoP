@@ -7,6 +7,8 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { TEMPLATE_VERSION, TEMPLATE_UPDATED_DATE } from '@/lib/template-version';
 import AdminRoute from '@/components/AdminRoute';
+import { Button } from '@/components/ui/button';
+import { SectionCard } from '@/components/ui/section-card';
 import { getSession, clearSession } from '@/lib/auth-utils';
 
 interface ImportResult {
@@ -225,7 +227,7 @@ function AdminImportPageContent() {
 
       <div className="max-w-4xl mx-auto p-8 space-y-8">
         {/* Download Template Section */}
-        <section className="border-2 rounded-lg p-6 border-border bg-card">
+        <SectionCard>
           <div className="flex items-start gap-4">
             <div className="p-3 bg-primary/10 rounded-lg">
               <FileSpreadsheet className="w-6 h-6 text-primary" />
@@ -250,10 +252,10 @@ function AdminImportPageContent() {
               )}
             </div>
           </div>
-        </section>
+        </SectionCard>
 
         {/* Upload Section */}
-        <section className="border-2 rounded-lg p-6 border-border bg-card">
+        <SectionCard>
           <div className="flex items-start gap-4 mb-6">
             <div className="p-3 bg-primary/10 rounded-lg">
               <Upload className="w-6 h-6 text-primary" />
@@ -381,7 +383,7 @@ function AdminImportPageContent() {
               </button>
             </div>
           )}
-        </section>
+        </SectionCard>
 
         {/* Confirmation Dialog */}
         {showResetConfirm && (
@@ -419,7 +421,7 @@ function AdminImportPageContent() {
 
         {/* Results Section */}
         {result && (
-          <section className="border-2 rounded-lg p-6 border-border bg-card space-y-6">
+          <SectionCard className="space-y-6">
             <div>
               <h2 className="text-xl font-bold mb-4">Import Results</h2>
 
@@ -507,7 +509,7 @@ function AdminImportPageContent() {
             >
               Import Another File
             </button>
-          </section>
+          </SectionCard>
         )}
       </div>
     </main>

@@ -10,6 +10,7 @@ import { GoalsSection } from '@/components/profile/GoalsSection';
 import ResizableTraitModal from '@/components/profile/ResizableTraitModal';
 import { ChronotypeLoadingSpinner } from '@/components/LoadingSpinner';
 import { formatDateAU } from '@/lib/date-utils';
+import { SectionCard } from '@/components/ui/section-card';
 import type { BigFiveGroup } from '@/types/profile';
 
 interface BigFiveProfileData {
@@ -134,7 +135,7 @@ export default function UserProfilePage() {
         </div>
 
         {/* Basic Info, Core Values, Character Strengths */}
-        <section className="border-2 rounded-lg p-6 border-border bg-card mb-6">
+        <SectionCard className="mb-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
             {/* Basic Information */}
             <div className="flex flex-col h-full">
@@ -203,7 +204,7 @@ export default function UserProfilePage() {
               </div>
             </div>
           </div>
-        </section>
+        </SectionCard>
 
         {/* Chronotype */}
         <div className="mb-8">
@@ -228,11 +229,11 @@ export default function UserProfilePage() {
                 isReadOnly={true}
               />
             ) : (
-              <div className="border-2 rounded-lg p-6 border-border bg-card">
+              <SectionCard>
                 <div className="flex items-center justify-center py-8">
                   <ChronotypeLoadingSpinner message="Loading Big Five data..." />
                 </div>
-              </div>
+              </SectionCard>
             )}
           </div>
         ) : (
@@ -240,11 +241,11 @@ export default function UserProfilePage() {
             <h2 className="text-xl font-semibold text-big-five mb-4">
               Big 5 Factor of Personality
             </h2>
-            <div className="border-2 rounded-lg p-6 border-border bg-card">
+            <SectionCard>
               <div className="text-center py-8 text-muted-foreground italic">
                 Not set
               </div>
-            </div>
+            </SectionCard>
           </div>
         )}
 
