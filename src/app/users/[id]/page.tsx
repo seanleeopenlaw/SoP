@@ -13,6 +13,7 @@ import { formatDateAU } from '@/lib/date-utils';
 import type { BigFiveGroup } from '@/types/profile';
 
 interface BigFiveProfileData {
+  id?: string;
   opennessData?: any;
   conscientiousnessData?: any;
   extraversionData?: any;
