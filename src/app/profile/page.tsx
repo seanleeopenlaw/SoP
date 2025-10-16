@@ -18,6 +18,14 @@ import { transformBigFiveGroupToDatabase } from '@/lib/big-five-config';
 import { toast } from "sonner";
 import { Button } from '@/components/ui/button';
 import { SectionCard } from '@/components/ui/section-card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
 import type { Subtrait, BigFiveGroup, Profile } from '@/types/profile';
 
 function ProfilePageContent() {
@@ -373,50 +381,56 @@ function ProfilePageContent() {
 
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-foreground">Birthday</label>
-                <div className="flex gap-2">
-                  <select
-                    value={profile.birthday ? new Date(profile.birthday).getMonth() + 1 : ''}
-                    onChange={(e) => {
-                      const month = e.target.value;
+                <div className="flex gap-3">
+                  <Select
+                    value={profile.birthday ? String(new Date(profile.birthday).getMonth() + 1) : ''}
+                    onValueChange={(value) => {
+                      const month = value;
                       const day = profile.birthday ? new Date(profile.birthday).getDate() : 1;
                       if (month) {
                         const year = new Date().getFullYear();
                         handleBasicInfoChange('birthday', `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
                       }
                     }}
-                    className="flex-1 bg-input border border-border text-foreground px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   >
-                    <option value="">Month</option>
-                    <option value="1">January</option>
-                    <option value="2">February</option>
-                    <option value="3">March</option>
-                    <option value="4">April</option>
-                    <option value="5">May</option>
-                    <option value="6">June</option>
-                    <option value="7">July</option>
-                    <option value="8">August</option>
-                    <option value="9">September</option>
-                    <option value="10">October</option>
-                    <option value="11">November</option>
-                    <option value="12">December</option>
-                  </select>
-                  <select
-                    value={profile.birthday ? new Date(profile.birthday).getDate() : ''}
-                    onChange={(e) => {
-                      const day = e.target.value;
+                    <SelectTrigger className="w-[60%]">
+                      <SelectValue placeholder="Month" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1">January</SelectItem>
+                      <SelectItem value="2">February</SelectItem>
+                      <SelectItem value="3">March</SelectItem>
+                      <SelectItem value="4">April</SelectItem>
+                      <SelectItem value="5">May</SelectItem>
+                      <SelectItem value="6">June</SelectItem>
+                      <SelectItem value="7">July</SelectItem>
+                      <SelectItem value="8">August</SelectItem>
+                      <SelectItem value="9">September</SelectItem>
+                      <SelectItem value="10">October</SelectItem>
+                      <SelectItem value="11">November</SelectItem>
+                      <SelectItem value="12">December</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select
+                    value={profile.birthday ? String(new Date(profile.birthday).getDate()) : ''}
+                    onValueChange={(value) => {
+                      const day = value;
                       const month = profile.birthday ? new Date(profile.birthday).getMonth() + 1 : 1;
                       if (day) {
                         const year = new Date().getFullYear();
                         handleBasicInfoChange('birthday', `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
                       }
                     }}
-                    className="flex-1 bg-input border border-border text-foreground px-4 py-2 rounded-sm focus:outline-none focus:ring-2 focus:ring-ring"
                   >
-                    <option value="">Day</option>
-                    {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
-                      <option key={day} value={day}>{day}</option>
-                    ))}
-                  </select>
+                    <SelectTrigger className="w-[37%]">
+                      <SelectValue placeholder="Day" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Array.from({ length: 31 }, (_, i) => i + 1).map(day => (
+                        <SelectItem key={day} value={String(day)}>{day}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>
@@ -464,6 +478,8 @@ function ProfilePageContent() {
         </div>
         )}
 
+        <Separator className="my-8" />
+
         {/* Chronotype */}
         <section>
           <h2 className="text-2xl font-semibold text-foreground mb-4">Chronotype</h2>
@@ -474,6 +490,8 @@ function ProfilePageContent() {
           />
         </section>
 
+        <Separator className="my-8" />
+
         {/* Big 5 Personality */}
         <section>
           <h2 className="text-2xl font-semibold text-foreground mb-4">Big 5 Factor of Personality</h2>
@@ -483,6 +501,8 @@ function ProfilePageContent() {
             isReadOnly={isReadOnly}
           />
         </section>
+
+        <Separator className="my-8" />
 
         {/* Goals */}
         <GoalsSection

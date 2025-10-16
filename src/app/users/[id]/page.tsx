@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { Info, Link } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
 import { ChronotypeSelector } from '@/components/profile/ChronotypeSelector';
 import { BigFiveSelector } from '@/components/profile/BigFiveSelector';
 import { GoalsSection } from '@/components/profile/GoalsSection';
@@ -144,9 +145,7 @@ export default function UserProfilePage() {
               <Link className="w-4 h-4" />
               Copy Link
             </button>
-            <span className="px-3 py-1 text-xs font-semibold bg-primary/10 text-primary rounded">
-              READ-ONLY
-            </span>
+            <Badge variant="secondary">READ-ONLY</Badge>
           </div>
         </div>
 
