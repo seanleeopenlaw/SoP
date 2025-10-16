@@ -1,0 +1,355 @@
+{
+  "profiles": [
+    {
+      "userProfile": {
+        "id": "550e8400-e29b-41d4-a716-446655440001",
+        "userId": "auth-user-001",
+        "name": "Sarah Chen",
+        "team": "Product Design",
+        "birthday": "1992-03-15",
+        "avatarUrl": "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
+        "createdAt": "2025-01-15T10:00:00Z",
+        "updatedAt": "2025-01-15T10:00:00Z"
+      },
+      "coreValues": {
+        "id": "550e8400-e29b-41d4-a716-446655440011",
+        "profileId": "550e8400-e29b-41d4-a716-446655440001",
+        "values": [
+          "Creativity",
+          "Collaboration",
+          "Integrity",
+          "Innovation",
+          "Empathy"
+        ],
+        "createdAt": "2025-01-15T10:05:00Z",
+        "updatedAt": "2025-01-15T10:05:00Z"
+      },
+      "characterStrengths": {
+        "id": "550e8400-e29b-41d4-a716-446655440012",
+        "profileId": "550e8400-e29b-41d4-a716-446655440001",
+        "strengths": [
+          "Problem-solving",
+          "Active listening",
+          "Strategic thinking",
+          "Adaptability",
+          "Mentorship"
+        ],
+        "createdAt": "2025-01-15T10:10:00Z",
+        "updatedAt": "2025-01-15T10:10:00Z"
+      },
+      "chronotype": {
+        "id": "550e8400-e29b-41d4-a716-446655440013",
+        "profileId": "550e8400-e29b-41d4-a716-446655440001",
+        "types": ["Bear", "Dolphin"],
+        "primaryType": "Bear",
+        "createdAt": "2025-01-15T10:15:00Z",
+        "updatedAt": "2025-01-15T10:15:00Z"
+      },
+      "bigFive": {
+        "id": "550e8400-e29b-41d4-a716-446655440014",
+        "profileId": "550e8400-e29b-41d4-a716-446655440001",
+        "openness": {
+          "groupName": "Openness",
+          "overallLevel": "High",
+          "overallScore": 82,
+          "subtraits": [
+            { "name": "Imagination", "level": "High", "score": 85 },
+            { "name": "Artistic Interests", "level": "High", "score": 88 },
+            { "name": "Emotionality", "level": "High", "score": 78 },
+            { "name": "Adventurousness", "level": "High", "score": 80 },
+            { "name": "Intellect", "level": "High", "score": 84 },
+            { "name": "Liberalism", "level": "Average", "score": 65 }
+          ]
+        },
+        "conscientiousness": {
+          "groupName": "Conscientiousness",
+          "overallLevel": "High",
+          "overallScore": 75,
+          "subtraits": [
+            { "name": "Self-Efficacy", "level": "High", "score": 78 },
+            { "name": "Orderliness", "level": "Average", "score": 68 },
+            { "name": "Dutifulness", "level": "High", "score": 82 },
+            { "name": "Achievement-Striving", "level": "High", "score": 80 },
+            { "name": "Self-Discipline", "level": "High", "score": 75 },
+            { "name": "Cautiousness", "level": "Average", "score": 65 }
+          ]
+        },
+        "extraversion": {
+          "groupName": "Extraversion",
+          "overallLevel": "Average",
+          "overallScore": 58,
+          "subtraits": [
+            { "name": "Friendliness", "level": "High", "score": 72 },
+            { "name": "Gregariousness", "level": "Average", "score": 55 },
+            { "name": "Assertiveness", "level": "Average", "score": 60 },
+            { "name": "Activity Level", "level": "High", "score": 70 },
+            { "name": "Excitement-Seeking", "level": "Low", "score": 40 },
+            { "name": "Cheerfulness", "level": "Average", "score": 65 }
+          ]
+        },
+        "agreeableness": {
+          "groupName": "Agreeableness",
+          "overallLevel": "High",
+          "overallScore": 78,
+          "subtraits": [
+            { "name": "Trust", "level": "High", "score": 75 },
+            { "name": "Morality", "level": "High", "score": 85 },
+            { "name": "Altruism", "level": "High", "score": 82 },
+            { "name": "Cooperation", "level": "High", "score": 80 },
+            { "name": "Modesty", "level": "Average", "score": 65 },
+            { "name": "Sympathy", "level": "High", "score": 81 }
+          ]
+        },
+        "neuroticism": {
+          "groupName": "Neuroticism",
+          "overallLevel": "Low",
+          "overallScore": 35,
+          "subtraits": [
+            { "name": "Anxiety", "level": "Low", "score": 38 },
+            { "name": "Anger", "level": "Low", "score": 25 },
+            { "name": "Depression", "level": "Low", "score": 30 },
+            { "name": "Self-Consciousness", "level": "Average", "score": 45 },
+            { "name": "Immoderation", "level": "Low", "score": 32 },
+            { "name": "Vulnerability", "level": "Low", "score": 35 }
+          ]
+        },
+        "createdAt": "2025-01-15T10:20:00Z",
+        "updatedAt": "2025-01-15T10:20:00Z"
+      }
+    },
+    {
+      "userProfile": {
+        "id": "550e8400-e29b-41d4-a716-446655440002",
+        "userId": "auth-user-002",
+        "name": "Marcus Johnson",
+        "team": "Engineering",
+        "birthday": "1988-07-22",
+        "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
+        "createdAt": "2025-01-16T09:00:00Z",
+        "updatedAt": "2025-01-16T09:00:00Z"
+      },
+      "coreValues": {
+        "id": "550e8400-e29b-41d4-a716-446655440021",
+        "profileId": "550e8400-e29b-41d4-a716-446655440002",
+        "values": [
+          "Excellence",
+          "Continuous Learning",
+          "Transparency",
+          "Teamwork",
+          "Impact"
+        ],
+        "createdAt": "2025-01-16T09:05:00Z",
+        "updatedAt": "2025-01-16T09:05:00Z"
+      },
+      "characterStrengths": {
+        "id": "550e8400-e29b-41d4-a716-446655440022",
+        "profileId": "550e8400-e29b-41d4-a716-446655440002",
+        "strengths": [
+          "Technical expertise",
+          "Systems thinking",
+          "Code review",
+          "Architecture design",
+          "Performance optimization"
+        ],
+        "createdAt": "2025-01-16T09:10:00Z",
+        "updatedAt": "2025-01-16T09:10:00Z"
+      },
+      "chronotype": {
+        "id": "550e8400-e29b-41d4-a716-446655440023",
+        "profileId": "550e8400-e29b-41d4-a716-446655440002",
+        "types": ["Lion"],
+        "primaryType": "Lion",
+        "createdAt": "2025-01-16T09:15:00Z",
+        "updatedAt": "2025-01-16T09:15:00Z"
+      },
+      "bigFive": {
+        "id": "550e8400-e29b-41d4-a716-446655440024",
+        "profileId": "550e8400-e29b-41d4-a716-446655440002",
+        "openness": {
+          "groupName": "Openness",
+          "overallLevel": "High",
+          "overallScore": 76,
+          "subtraits": [
+            { "name": "Imagination", "level": "Average", "score": 62 },
+            { "name": "Artistic Interests", "level": "Average", "score": 55 },
+            { "name": "Emotionality", "level": "Average", "score": 58 },
+            { "name": "Adventurousness", "level": "High", "score": 78 },
+            { "name": "Intellect", "level": "High", "score": 92 },
+            { "name": "Liberalism", "level": "High", "score": 75 }
+          ]
+        },
+        "conscientiousness": {
+          "groupName": "Conscientiousness",
+          "overallLevel": "High",
+          "overallScore": 88,
+          "subtraits": [
+            { "name": "Self-Efficacy", "level": "High", "score": 90 },
+            { "name": "Orderliness", "level": "High", "score": 85 },
+            { "name": "Dutifulness", "level": "High", "score": 92 },
+            { "name": "Achievement-Striving", "level": "High", "score": 88 },
+            { "name": "Self-Discipline", "level": "High", "score": 90 },
+            { "name": "Cautiousness", "level": "High", "score": 82 }
+          ]
+        },
+        "extraversion": {
+          "groupName": "Extraversion",
+          "overallLevel": "Average",
+          "overallScore": 52,
+          "subtraits": [
+            { "name": "Friendliness", "level": "Average", "score": 58 },
+            { "name": "Gregariousness", "level": "Low", "score": 42 },
+            { "name": "Assertiveness", "level": "High", "score": 75 },
+            { "name": "Activity Level", "level": "High", "score": 70 },
+            { "name": "Excitement-Seeking", "level": "Low", "score": 35 },
+            { "name": "Cheerfulness", "level": "Average", "score": 55 }
+          ]
+        },
+        "agreeableness": {
+          "groupName": "Agreeableness",
+          "overallLevel": "Average",
+          "overallScore": 62,
+          "subtraits": [
+            { "name": "Trust", "level": "Average", "score": 60 },
+            { "name": "Morality", "level": "High", "score": 78 },
+            { "name": "Altruism", "level": "Average", "score": 65 },
+            { "name": "Cooperation", "level": "Average", "score": 62 },
+            { "name": "Modesty", "level": "Average", "score": 55 },
+            { "name": "Sympathy", "level": "Average", "score": 58 }
+          ]
+        },
+        "neuroticism": {
+          "groupName": "Neuroticism",
+          "overallLevel": "Low",
+          "overallScore": 28,
+          "subtraits": [
+            { "name": "Anxiety", "level": "Low", "score": 30 },
+            { "name": "Anger", "level": "Low", "score": 22 },
+            { "name": "Depression", "level": "Low", "score": 18 },
+            { "name": "Self-Consciousness", "level": "Low", "score": 35 },
+            { "name": "Immoderation", "level": "Low", "score": 28 },
+            { "name": "Vulnerability", "level": "Low", "score": 25 }
+          ]
+        },
+        "createdAt": "2025-01-16T09:20:00Z",
+        "updatedAt": "2025-01-16T09:20:00Z"
+      }
+    },
+    {
+      "userProfile": {
+        "id": "550e8400-e29b-41d4-a716-446655440003",
+        "userId": "auth-user-003",
+        "name": "Priya Patel",
+        "team": "Product Design",
+        "birthday": "1995-11-08",
+        "avatarUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400",
+        "createdAt": "2025-01-17T14:00:00Z",
+        "updatedAt": "2025-01-17T14:00:00Z"
+      },
+      "coreValues": {
+        "id": "550e8400-e29b-41d4-a716-446655440031",
+        "profileId": "550e8400-e29b-41d4-a716-446655440003",
+        "values": [
+          "User-centricity",
+          "Creativity",
+          "Growth mindset",
+          "Diversity",
+          "Sustainability"
+        ],
+        "createdAt": "2025-01-17T14:05:00Z",
+        "updatedAt": "2025-01-17T14:05:00Z"
+      },
+      "characterStrengths": {
+        "id": "550e8400-e29b-41d4-a716-446655440032",
+        "profileId": "550e8400-e29b-41d4-a716-446655440003",
+        "strengths": [
+          "Visual design",
+          "User research",
+          "Prototyping",
+          "Communication",
+          "Detail-oriented"
+        ],
+        "createdAt": "2025-01-17T14:10:00Z",
+        "updatedAt": "2025-01-17T14:10:00Z"
+      },
+      "chronotype": {
+        "id": "550e8400-e29b-41d4-a716-446655440033",
+        "profileId": "550e8400-e29b-41d4-a716-446655440003",
+        "types": ["Wolf", "Dolphin"],
+        "primaryType": "Wolf",
+        "createdAt": "2025-01-17T14:15:00Z",
+        "updatedAt": "2025-01-17T14:15:00Z"
+      },
+      "bigFive": {
+        "id": "550e8400-e29b-41d4-a716-446655440034",
+        "profileId": "550e8400-e29b-41d4-a716-446655440003",
+        "openness": {
+          "groupName": "Openness",
+          "overallLevel": "High",
+          "overallScore": 90,
+          "subtraits": [
+            { "name": "Imagination", "level": "High", "score": 95 },
+            { "name": "Artistic Interests", "level": "High", "score": 92 },
+            { "name": "Emotionality", "level": "High", "score": 85 },
+            { "name": "Adventurousness", "level": "High", "score": 88 },
+            { "name": "Intellect", "level": "High", "score": 90 },
+            { "name": "Liberalism", "level": "High", "score": 85 }
+          ]
+        },
+        "conscientiousness": {
+          "groupName": "Conscientiousness",
+          "overallLevel": "Average",
+          "overallScore": 65,
+          "subtraits": [
+            { "name": "Self-Efficacy", "level": "High", "score": 75 },
+            { "name": "Orderliness", "level": "Average", "score": 58 },
+            { "name": "Dutifulness", "level": "Average", "score": 68 },
+            { "name": "Achievement-Striving", "level": "High", "score": 72 },
+            { "name": "Self-Discipline", "level": "Average", "score": 62 },
+            { "name": "Cautiousness", "level": "Average", "score": 55 }
+          ]
+        },
+        "extraversion": {
+          "groupName": "Extraversion",
+          "overallLevel": "High",
+          "overallScore": 72,
+          "subtraits": [
+            { "name": "Friendliness", "level": "High", "score": 80 },
+            { "name": "Gregariousness", "level": "High", "score": 75 },
+            { "name": "Assertiveness", "level": "Average", "score": 65 },
+            { "name": "Activity Level", "level": "High", "score": 78 },
+            { "name": "Excitement-Seeking", "level": "High", "score": 72 },
+            { "name": "Cheerfulness", "level": "High", "score": 82 }
+          ]
+        },
+        "agreeableness": {
+          "groupName": "Agreeableness",
+          "overallLevel": "High",
+          "overallScore": 80,
+          "subtraits": [
+            { "name": "Trust", "level": "High", "score": 78 },
+            { "name": "Morality", "level": "High", "score": 82 },
+            { "name": "Altruism", "level": "High", "score": 85 },
+            { "name": "Cooperation", "level": "High", "score": 80 },
+            { "name": "Modesty", "level": "High", "score": 75 },
+            { "name": "Sympathy", "level": "High", "score": 85 }
+          ]
+        },
+        "neuroticism": {
+          "groupName": "Neuroticism",
+          "overallLevel": "Average",
+          "overallScore": 48,
+          "subtraits": [
+            { "name": "Anxiety", "level": "Average", "score": 52 },
+            { "name": "Anger", "level": "Low", "score": 38 },
+            { "name": "Depression", "level": "Low", "score": 40 },
+            { "name": "Self-Consciousness", "level": "Average", "score": 55 },
+            { "name": "Immoderation", "level": "Average", "score": 50 },
+            { "name": "Vulnerability", "level": "Average", "score": 48 }
+          ]
+        },
+        "createdAt": "2025-01-17T14:20:00Z",
+        "updatedAt": "2025-01-17T14:20:00Z"
+      }
+    }
+  ]
+}

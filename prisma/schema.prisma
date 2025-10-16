@@ -1,0 +1,184 @@
+// ============================================================================
+// People Profile Web App - Prisma Schema
+// ORM: Prisma
+// Database: PostgreSQL (Supabase compatible)
+// ============================================================================
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================================================
+// Enums
+// ============================================================================
+
+enum ChronotypeAnimal {
+  Lion
+  Bear
+  Wolf
+  Dolphin
+
+  @@map("chronotype_animal")
+}
+
+enum TraitLevel {
+  High
+  Average
+  Low
+}
+
+// ============================================================================
+// User Profile Model
+// ============================================================================
+
+model UserProfile {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @unique @map("user_id") @db.Uuid
+  email     String?  @unique @db.Text
+  name      String   @db.VarChar(255)
+  team      String?  @db.VarChar(255)
+  birthday  DateTime? @db.Date
+  avatarUrl String?  @map("avatar_url") @db.Text
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  coreValues         CoreValues?
+  characterStrengths CharacterStrengths?
+  chronotype         Chronotype?
+  bigFiveProfile     BigFiveProfile?
+  goals              Goals?
+  profileVersions    ProfileVersion[]
+
+  @@index([userId], name: "idx_user_profiles_user_id")
+  @@index([email], name: "idx_user_profiles_email")
+  @@index([team], name: "idx_user_profiles_team")
+  @@index([createdAt(sort: Desc)], name: "idx_user_profiles_created_at")
+  @@map("user_profiles")
+}
+
+// ============================================================================
+// Core Values Model
+// ============================================================================
+
+model CoreValues {
+  id        String   @id @default(uuid()) @db.Uuid
+  profileId String   @unique @map("profile_id") @db.Uuid
+  values    String[] // Exactly 5 values
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  profile UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId], name: "idx_core_values_profile_id")
+  @@map("core_values")
+}
+
+// ============================================================================
+// Character Strengths Model
+// ============================================================================
+
+model CharacterStrengths {
+  id        String   @id @default(uuid()) @db.Uuid
+  profileId String   @unique @map("profile_id") @db.Uuid
+  strengths String[] // Exactly 5 strengths
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  profile UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId], name: "idx_character_strengths_profile_id")
+  @@map("character_strengths")
+}
+
+// ============================================================================
+// Chronotype Model
+// ============================================================================
+
+model Chronotype {
+  id          String            @id @default(uuid()) @db.Uuid
+  profileId   String            @unique @map("profile_id") @db.Uuid
+  types       ChronotypeAnimal[] // Multiple selection allowed
+  primaryType ChronotypeAnimal? @map("primary_type")
+  createdAt   DateTime          @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime          @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  profile UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId], name: "idx_chronotypes_profile_id")
+  @@map("chronotypes")
+}
+
+// ============================================================================
+// Big Five Profile Model
+// ============================================================================
+
+model BigFiveProfile {
+  id                     String   @id @default(uuid()) @db.Uuid
+  profileId              String   @unique @map("profile_id") @db.Uuid
+
+  // Each dimension stored as JSONB
+  // Structure: { groupName, overallLevel, overallScore, subtraits[] }
+  opennessData           Json     @map("openness_data")
+  conscientiousnessData  Json     @map("conscientiousness_data")
+  extraversionData       Json     @map("extraversion_data")
+  agreeablenessData      Json     @map("agreeableness_data")
+  neuroticismData        Json     @map("neuroticism_data")
+
+  createdAt              DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt              DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  profile UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId], name: "idx_big_five_profiles_profile_id")
+  @@map("big_five_profiles")
+}
+
+// ============================================================================
+// Goals Model
+// ============================================================================
+
+model Goals {
+  id                String   @id @default(uuid()) @db.Uuid
+  profileId         String   @unique @map("profile_id") @db.Uuid
+  period            String   @db.VarChar(100)
+  professionalGoals String?  @map("professional_goals") @db.Text
+  personalGoals     String?  @map("personal_goals") @db.Text
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  profile UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId], name: "idx_goals_profile_id")
+  @@map("goals")
+}
+
+// ============================================================================
+// Profile Version Model (for tracking changes)
+// ============================================================================
+
+model ProfileVersion {
+  id            String   @id @default(uuid()) @db.Uuid
+  profileId     String   @map("profile_id") @db.Uuid
+  versionNumber Int      @map("version_number")
+  changes       Json     // What changed in this version
+  changedBy     String?  @map("changed_by") @db.Uuid
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  profile UserProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@unique([profileId, versionNumber], name: "unique_profile_version")
+  @@index([profileId, versionNumber(sort: Desc)], name: "idx_profile_versions_profile_id")
+  @@map("profile_versions")
+}
