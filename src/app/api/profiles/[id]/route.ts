@@ -35,7 +35,6 @@ export async function GET(
         characterStrengths: true,
         chronotype: true,
         bigFiveProfile: true,
-        goals: true,
       },
     });
 
@@ -88,7 +87,7 @@ export async function PATCH(
       );
     }
 
-    const { name, team, birthday, coreValues, characterStrengths, chronotype, bigFiveProfile, goals } = validationResult.data;
+    const { name, team, birthday, coreValues, characterStrengths, chronotype, bigFiveProfile } = validationResult.data;
 
     // Execute all updates within a transaction to ensure data consistency
     const updatedProfile = await prisma.$transaction(async (tx) => {
@@ -161,22 +160,6 @@ export async function PATCH(
             neuroticismData: bigFiveProfile.neuroticismData || {},
           },
         }) : Promise.resolve(null),
-
-        // Update Goals if provided
-        goals ? tx.goals.upsert({
-          where: { profileId: id },
-          create: {
-            profileId: id,
-            period: goals.period,
-            professionalGoals: goals.professionalGoals || null,
-            personalGoals: goals.personalGoals || null,
-          },
-          update: {
-            period: goals.period,
-            professionalGoals: goals.professionalGoals || null,
-            personalGoals: goals.personalGoals || null,
-          },
-        }) : Promise.resolve(null),
       ]);
 
       // Fetch and return the complete updated profile with all relations
@@ -187,7 +170,6 @@ export async function PATCH(
           characterStrengths: true,
           chronotype: true,
           bigFiveProfile: true,
-          goals: true,
         },
       });
     });
