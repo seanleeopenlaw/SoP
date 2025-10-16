@@ -204,7 +204,7 @@ export default function UserProfilePage() {
             {/* Core Values */}
             <div className="flex flex-col h-full">
               <div className="flex items-center gap-2 mb-3">
-                <h3 className="text-xl font-bold text-foreground">Core Values</h3>
+                <h3 className="text-xl font-bold" style={{ color: '#E50202' }}>Core Values</h3>
                 <Button
                   onClick={() => setInfoModal({ title: 'Core Values', imageUrl: '/core-values.png' })}
                   variant="ghost"
@@ -229,7 +229,7 @@ export default function UserProfilePage() {
             {/* Character Strengths */}
             <div className="flex flex-col h-full">
               <div className="flex items-center gap-2 mb-3">
-                <h3 className="text-xl font-bold text-character-strength">Character Strengths</h3>
+                <h3 className="text-xl font-bold" style={{ color: '#E18600' }}>Character Strengths</h3>
                 <Button
                   onClick={() => setInfoModal({ title: 'Character Strengths', imageUrl: '/strengths.png' })}
                   variant="ghost"
