@@ -66,6 +66,13 @@ export async function GET(request: Request) {
               id: true,
             },
           },
+          goals: {
+            select: {
+              period: true,
+              professionalGoals: true,
+              personalGoals: true,
+            },
+          },
         },
         orderBy: {
           name: 'asc',

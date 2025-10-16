@@ -30,6 +30,9 @@ const bigFiveGroupSchema = z.object({
   subtraits: z.array(subtraitSchema),
 });
 
+// Big Five Database format (what's actually sent to the API)
+const bigFiveDataSchema = z.any();
+
 // Goals validation
 const goalsSchema = z.object({
   period: z.string().min(1, 'Period is required').max(100),
@@ -46,11 +49,11 @@ export const profileUpdateSchema = z.object({
   characterStrengths: z.array(z.string()).max(5).optional(),
   chronotype: chronotypeSchema.optional(),
   bigFiveProfile: z.object({
-    opennessData: bigFiveGroupSchema.optional(),
-    conscientiousnessData: bigFiveGroupSchema.optional(),
-    extraversionData: bigFiveGroupSchema.optional(),
-    agreeablenessData: bigFiveGroupSchema.optional(),
-    neuroticismData: bigFiveGroupSchema.optional(),
+    opennessData: bigFiveDataSchema.optional(),
+    conscientiousnessData: bigFiveDataSchema.optional(),
+    extraversionData: bigFiveDataSchema.optional(),
+    agreeablenessData: bigFiveDataSchema.optional(),
+    neuroticismData: bigFiveDataSchema.optional(),
   }).optional(),
   goals: goalsSchema.optional(),
 });

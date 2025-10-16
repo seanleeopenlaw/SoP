@@ -38,6 +38,7 @@ export async function POST(request: Request) {
         characterStrengths: true,
         chronotype: true,
         bigFiveProfile: true,
+        goals: true,
       },
     });
 
@@ -59,6 +60,7 @@ export async function POST(request: Request) {
           characterStrengths: true,
           chronotype: true,
           bigFiveProfile: true,
+          goals: true,
         },
       });
     }
