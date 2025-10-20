@@ -25,23 +25,12 @@ import { calculateProfileCompleteness } from '@/lib/profile-utils';
 import type { Profile } from '@/types/profile';
 import { logger } from '@/lib/logger';
 
-async function fetchAllProfiles(): Promise<Profile[]> {
-  let allProfiles: Profile[] = [];
-  let page = 1;
-  let hasMore = true;
-
-  while (hasMore) {
-    const response = await fetch(`/api/profiles?page=${page}&limit=100`);
-    if (!response.ok) {
-      throw new Error('Failed to fetch profiles');
-    }
-    const result = await response.json();
-    allProfiles = [...allProfiles, ...(result.data || [])];
-    hasMore = result.pagination?.hasNext || false;
-    page++;
+async function fetchProfilesPage({ pageParam = 1 }) {
+  const response = await fetch(`/api/profiles?page=${pageParam}&limit=100`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch profiles');
   }
-
-  return allProfiles;
+  return response.json();
 }
 
 export default function UsersPage() {
@@ -54,12 +43,30 @@ export default function UsersPage() {
   const [profileToDelete, setProfileToDelete] = useState<{ id: string; name: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  // Use React Query for data fetching with caching
-  const { data: profiles = [], isLoading, refetch } = useQuery({
+  // Use Infinite Query for progressive loading
+  const {
+    data,
+    isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
+    refetch,
+  } = useInfiniteQuery({
     queryKey: ['profiles'],
-    queryFn: fetchAllProfiles,
+    queryFn: fetchProfilesPage,
+    getNextPageParam: (lastPage) =>
+      lastPage.pagination?.hasNext ? lastPage.pagination.page + 1 : undefined,
+    initialPageParam: 1,
     staleTime: 60 * 1000, // 60 seconds
   });
+
+  // Flatten all pages into single profiles array
+  const profiles = useMemo(() => {
+    return data?.pages.flatMap(page => page.data || []) || [];
+  }, [data]);
+
+  // Intersection Observer for infinite scroll
+  const loadMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const session = getSession();
@@ -67,6 +74,30 @@ export default function UsersPage() {
     setIsAdmin(isAdminUser());
     setUserEmail(session?.email || null);
   }, []);
+
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchNextPage();
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    const currentRef = loadMoreRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   // Memoize filtered profiles for performance
   const filteredProfiles = useMemo(() => {
@@ -218,22 +249,40 @@ export default function UsersPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProfiles.map((profile) => (
-              <UserCard
-                key={profile.id}
-                id={profile.id}
-                name={profile.name}
-                email={profile.email}
-                team={profile.team}
-                chronotype={profile.chronotype}
-                completeness={calculateProfileCompleteness(profile)}
-                isAdmin={isAdmin}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProfiles.map((profile) => (
+                <UserCard
+                  key={profile.id}
+                  id={profile.id}
+                  name={profile.name}
+                  email={profile.email}
+                  team={profile.team}
+                  chronotype={profile.chronotype}
+                  completeness={calculateProfileCompleteness(profile)}
+                  isAdmin={isAdmin}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </div>
+
+            {/* Infinite scroll trigger */}
+            {!searchQuery && hasNextPage && (
+              <div ref={loadMoreRef} className="flex items-center justify-center py-8">
+                {isFetchingNextPage && (
+                  <ChronotypeLoadingSpinner message="Loading more profiles..." />
+                )}
+              </div>
+            )}
+
+            {/* End message */}
+            {!searchQuery && !hasNextPage && profiles.length > 0 && (
+              <div className="text-center py-8 text-muted-foreground">
+                All profiles loaded ({profiles.length} total)
+              </div>
+            )}
+          </>
         )}
       </div>
 
