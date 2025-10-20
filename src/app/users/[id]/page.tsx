@@ -393,7 +393,7 @@ export default function UserProfilePage() {
             <AlertDialogHeader>
               <AlertDialogTitle>Delete Profile</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to delete <strong>{profile?.name}</strong>'s profile?
+                Are you sure you want to delete <strong>{profile?.name}</strong>&apos;s profile?
                 This action cannot be undone and will permanently remove all associated data.
               </AlertDialogDescription>
             </AlertDialogHeader>
