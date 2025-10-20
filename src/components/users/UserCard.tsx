@@ -15,6 +15,9 @@ interface UserCardProps {
     primaryType: string;
   } | null;
   completeness: number;
+  isAdmin?: boolean;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
 const getChronotypeEmoji = (type: string) => {
@@ -32,10 +35,22 @@ const getChronotypeEmoji = (type: string) => {
   }
 };
 
-export const UserCard = memo(function UserCard({ id, name, email, team, chronotype, completeness }: UserCardProps) {
+export const UserCard = memo(function UserCard({ id, name, email, team, chronotype, completeness, isAdmin, onEdit, onDelete }: UserCardProps) {
   const profileUrl = `/users/${id}`;
   const chronotypeTypes = chronotype?.types || [];
   const displayTypes = chronotypeTypes.slice(0, 4); // Show max 4 chronotypes
+
+  const handleEdit = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onEdit?.(id);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onDelete?.(id);
+  };
 
   return (
     <Link
@@ -126,6 +141,24 @@ export const UserCard = memo(function UserCard({ id, name, email, team, chronoty
           </div>
         </div>
 
+        {/* Admin Actions */}
+        {isAdmin && (
+          <div className="flex gap-2">
+            <button
+              onClick={handleEdit}
+              className="flex-1 py-2 px-4 rounded-md text-center bg-blue-500/10 text-blue-600 hover:bg-blue-500 hover:text-white font-medium text-sm transition-colors duration-200"
+            >
+              Edit
+            </button>
+            <button
+              onClick={handleDelete}
+              className="flex-1 py-2 px-4 rounded-md text-center bg-red-500/10 text-red-600 hover:bg-red-500 hover:text-white font-medium text-sm transition-colors duration-200"
+            >
+              Delete
+            </button>
+          </div>
+        )}
+
         {/* View Label */}
         <div
           className={cn(
@@ -139,5 +172,16 @@ export const UserCard = memo(function UserCard({ id, name, email, team, chronoty
         </div>
       </div>
     </Link>
+  );
+}, (prevProps, nextProps) => {
+  // Custom comparator: only re-render if these specific props change
+  return (
+    prevProps.id === nextProps.id &&
+    prevProps.name === nextProps.name &&
+    prevProps.email === nextProps.email &&
+    prevProps.team === nextProps.team &&
+    prevProps.completeness === nextProps.completeness &&
+    prevProps.isAdmin === nextProps.isAdmin &&
+    JSON.stringify(prevProps.chronotype) === JSON.stringify(nextProps.chronotype)
   );
 });

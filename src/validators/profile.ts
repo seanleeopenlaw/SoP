@@ -11,9 +11,19 @@ export const profileCreateSchema = z.object({
 
 // Chronotype validation
 const chronotypeSchema = z.object({
-  types: z.array(z.enum(['Lion', 'Bear', 'Wolf', 'Dolphin'])).min(1),
-  primaryType: z.enum(['Lion', 'Bear', 'Wolf', 'Dolphin']),
-});
+  types: z.array(z.enum(['Lion', 'Bear', 'Wolf', 'Dolphin'])),
+  primaryType: z.enum(['Lion', 'Bear', 'Wolf', 'Dolphin']).optional(),
+}).refine(
+  (data) => {
+    // If types array is empty, primaryType should not be set
+    if (data.types.length === 0) return !data.primaryType;
+    // If types array has items, primaryType must be set and be one of the types
+    return data.primaryType && data.types.includes(data.primaryType);
+  },
+  {
+    message: 'Primary type must be one of the selected types',
+  }
+);
 
 // Big Five validation
 const subtraitSchema = z.object({
@@ -47,7 +57,7 @@ export const profileUpdateSchema = z.object({
   birthday: z.string().datetime().or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)).optional(),
   coreValues: z.array(z.string()).max(5).optional(),
   characterStrengths: z.array(z.string()).max(5).optional(),
-  chronotype: chronotypeSchema.optional(),
+  chronotype: chronotypeSchema.optional().nullable(),
   bigFiveProfile: z.object({
     opennessData: bigFiveDataSchema.optional(),
     conscientiousnessData: bigFiveDataSchema.optional(),

@@ -344,7 +344,7 @@ function AdminImportPageContent() {
                     Reset Database (Destructive)
                   </div>
                   <p className="text-sm text-destructive/80 mt-1">
-                    Delete ALL existing profiles not in this file, then import. Use this to clean up and sync with Excel as the single source of truth.
+                    Delete ALL existing profiles not in this file, then import. The database will match the Excel file exactly - profiles, data fields (birthdays, teams, etc.), everything. If data is missing from Excel, it will be removed from the database. Use this to sync with Excel as the single source of truth.
                   </p>
                 </div>
               </label>
@@ -394,8 +394,11 @@ function AdminImportPageContent() {
                 <AlertCircle className="w-6 h-6 text-destructive flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="text-lg font-bold text-destructive mb-2">Confirm Database Reset</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground mb-2">
                     This will <strong className="text-destructive">permanently delete ALL existing profiles</strong> that are not in the uploaded Excel file.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    All data fields (birthdays, teams, chronotypes, etc.) will also be synced exactly with the Excel file - if data is missing from Excel, it will be removed from the database.
                   </p>
                   <p className="text-sm text-muted-foreground mt-2">
                     Only profiles with matching emails in the Excel file will be kept/updated. This action cannot be undone.

@@ -91,6 +91,7 @@ export async function PATCH(
     const { name, team, birthday, coreValues, characterStrengths, chronotype, bigFiveProfile, goals } = validationResult.data;
 
     // Execute all updates within a transaction to ensure data consistency
+    // Increase timeout to 15 seconds for Supabase network latency
     const updatedProfile = await prisma.$transaction(async (tx) => {
       // Execute all updates in parallel within the transaction for better performance
       await Promise.all([
@@ -128,19 +129,25 @@ export async function PATCH(
           },
         }) : Promise.resolve(null),
 
-        // Update chronotype if provided
-        chronotype ? tx.chronotype.upsert({
-          where: { profileId: id },
-          create: {
-            profileId: id,
-            types: chronotype.types as ChronotypeAnimal[],
-            primaryType: chronotype.primaryType as ChronotypeAnimal,
-          },
-          update: {
-            types: chronotype.types as ChronotypeAnimal[],
-            primaryType: chronotype.primaryType as ChronotypeAnimal,
-          },
-        }) : Promise.resolve(null),
+        // Update chronotype if provided, or delete if null
+        chronotype === null
+          ? tx.chronotype.deleteMany({
+              where: { profileId: id },
+            })
+          : chronotype
+          ? tx.chronotype.upsert({
+              where: { profileId: id },
+              create: {
+                profileId: id,
+                types: chronotype.types as ChronotypeAnimal[],
+                primaryType: chronotype.primaryType as ChronotypeAnimal,
+              },
+              update: {
+                types: chronotype.types as ChronotypeAnimal[],
+                primaryType: chronotype.primaryType as ChronotypeAnimal,
+              },
+            })
+          : Promise.resolve(null),
 
         // Update Big Five if provided
         bigFiveProfile ? tx.bigFiveProfile.upsert({
@@ -190,6 +197,9 @@ export async function PATCH(
           goals: true,
         },
       });
+    }, {
+      maxWait: 15000, // Maximum time to wait for a transaction slot (15s)
+      timeout: 15000,  // Maximum time the transaction can run (15s)
     });
 
     return NextResponse.json(updatedProfile);
@@ -214,6 +224,66 @@ export async function PATCH(
 
     return NextResponse.json(
       { error: 'Failed to update profile' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await params;
+
+    // Validate UUID format
+    if (!isValidUUID(id)) {
+      return NextResponse.json(
+        { error: 'Invalid profile ID format' },
+        { status: 400 }
+      );
+    }
+
+    // Delete profile and all related data using transaction
+    await prisma.$transaction(async (tx) => {
+      // Delete all related data first (Prisma will handle this with cascading deletes if configured)
+      await Promise.all([
+        tx.coreValues.deleteMany({ where: { profileId: id } }),
+        tx.characterStrengths.deleteMany({ where: { profileId: id } }),
+        tx.chronotype.deleteMany({ where: { profileId: id } }),
+        tx.bigFiveProfile.deleteMany({ where: { profileId: id } }),
+        tx.goals.deleteMany({ where: { profileId: id } }),
+      ]);
+
+      // Delete the profile itself
+      await tx.userProfile.delete({ where: { id } });
+    }, {
+      maxWait: 15000,
+      timeout: 15000,
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting profile:', error);
+
+    // Handle specific Prisma errors
+    if (error instanceof Prisma.PrismaClientKnownRequestError) {
+      if (error.code === 'P2025') {
+        return NextResponse.json(
+          { error: 'Profile not found' },
+          { status: 404 }
+        );
+      }
+      if (error.code === 'P2028') {
+        return NextResponse.json(
+          { error: 'Transaction timeout - please try again' },
+          { status: 408 }
+        );
+      }
+    }
+
+    return NextResponse.json(
+      { error: 'Failed to delete profile' },
       { status: 500 }
     );
   }

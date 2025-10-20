@@ -1,14 +1,25 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { User, Shield, LogIn, LogOut } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { UserCard } from '@/components/users/UserCard';
 import { ChronotypeLoadingSpinner } from '@/components/LoadingSpinner';
 import { SearchInput } from '@/components/ui/search-input';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { isAdminUser, isAuthenticated, getSession, clearSession } from '@/lib/auth-utils';
 import { calculateProfileCompleteness } from '@/lib/profile-utils';
 import type { Profile } from '@/types/profile';
@@ -39,9 +50,12 @@ export default function UsersPage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [profileToDelete, setProfileToDelete] = useState<{ id: string; name: string } | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Use React Query for data fetching with caching
-  const { data: profiles = [], isLoading } = useQuery({
+  const { data: profiles = [], isLoading, refetch } = useQuery({
     queryKey: ['profiles'],
     queryFn: fetchAllProfiles,
     staleTime: 60 * 1000, // 60 seconds
@@ -71,8 +85,59 @@ export default function UsersPage() {
     router.push('/');
   };
 
+  const handleEdit = (id: string) => {
+    router.push(`/admin/edit/${id}`);
+  };
+
+  const handleDelete = (id: string) => {
+    const profile = profiles.find(p => p.id === id);
+    if (!profile) return;
+
+    setProfileToDelete({ id, name: profile.name });
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!profileToDelete) return;
+
+    setDeleteDialogOpen(false);
+    setIsDeleting(true);
+
+    try {
+      const response = await fetch(`/api/profiles/${profileToDelete.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        logger.error('Delete failed:', errorData);
+        throw new Error(errorData.error || 'Failed to delete profile');
+      }
+
+      // Refetch the profiles list without page reload
+      await refetch();
+
+      toast.success(`${profileToDelete.name}'s profile has been deleted`);
+    } catch (error) {
+      logger.error('Error deleting profile:', error);
+      toast.error(error instanceof Error ? error.message : 'Failed to delete profile. Please try again.');
+    } finally {
+      setIsDeleting(false);
+      setProfileToDelete(null);
+    }
+  };
+
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-background relative">
+      {/* Deleting Overlay */}
+      {isDeleting && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
+          <div className="bg-background rounded-lg p-8 flex flex-col items-center gap-4">
+            <ChronotypeLoadingSpinner message="Deleting profile..." />
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto p-4 md:p-8">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
@@ -163,11 +228,33 @@ export default function UsersPage() {
                 team={profile.team}
                 chronotype={profile.chronotype}
                 completeness={calculateProfileCompleteness(profile)}
+                isAdmin={isAdmin}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
               />
             ))}
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Profile</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete <strong>{profileToDelete?.name}</strong>'s profile?
+              This action cannot be undone and will permanently remove all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }

@@ -1,10 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Info, Link, Check } from 'lucide-react';
+import { Info, Link, Check, MoreVertical } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { isAdminUser } from '@/lib/auth-utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ChronotypeSelector } from '@/components/profile/ChronotypeSelector';
@@ -70,8 +87,14 @@ export default function UserProfilePage() {
   const router = useRouter();
   const [infoModal, setInfoModal] = useState<{ title: string; imageUrl: string } | null>(null);
   const [linkCopied, setLinkCopied] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
 
   const profileId = params.id as string;
+
+  useEffect(() => {
+    setIsAdmin(isAdminUser());
+  }, []);
 
   const handleCopyLink = () => {
     if (linkCopied) return;
@@ -86,6 +109,32 @@ export default function UserProfilePage() {
     setTimeout(() => {
       setLinkCopied(false);
     }, 2000);
+  };
+
+  const handleDelete = () => {
+    setDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!profile) return;
+
+    try {
+      const response = await fetch(`/api/profiles/${profileId}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete profile');
+      }
+
+      toast.success('Profile deleted successfully');
+      router.push('/users');
+    } catch (error) {
+      console.error('Error deleting profile:', error);
+      toast.error('Failed to delete profile');
+    } finally {
+      setDeleteDialogOpen(false);
+    }
   };
 
   // Use React Query for data fetching with caching
@@ -151,7 +200,7 @@ export default function UserProfilePage() {
                 <p className="text-sm text-muted-foreground">{profile.email}</p>
               </div>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               <Button
                 onClick={handleCopyLink}
                 variant="secondary"
@@ -170,6 +219,29 @@ export default function UserProfilePage() {
                   </>
                 )}
               </Button>
+              {isAdmin && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <MoreVertical className="w-5 h-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={() => router.push(`/admin/edit/${profileId}`)}
+                      className="cursor-pointer"
+                    >
+                      Edit Profile
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={handleDelete}
+                      className="cursor-pointer text-destructive focus:text-destructive"
+                    >
+                      Delete Profile
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
               <Badge variant="outline" className="self-center whitespace-nowrap">READ-ONLY</Badge>
             </div>
           </div>
@@ -314,6 +386,25 @@ export default function UserProfilePage() {
             onClose={() => setInfoModal(null)}
           />
         )}
+
+        {/* Delete Confirmation Dialog */}
+        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete Profile</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to delete <strong>{profile?.name}</strong>'s profile?
+                This action cannot be undone and will permanently remove all associated data.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </main>
   );
