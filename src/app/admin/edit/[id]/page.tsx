@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { Info, Users, ArrowLeft, LogOut } from 'lucide-react';
+import { Info, ArrowLeft, LogOut } from 'lucide-react';
 import { TextListInput } from '@/components/profile/TextListInput';
 import { ChronotypeSelector } from '@/components/profile/ChronotypeSelector';
 import { BigFiveSelector } from '@/components/profile/BigFiveSelector';
@@ -10,11 +10,9 @@ import { GoalsSection } from '@/components/profile/GoalsSection';
 import ResizableTraitModal from '@/components/profile/ResizableTraitModal';
 import { ChronotypeLoadingSpinner } from '@/components/LoadingSpinner';
 import AdminRoute from '@/components/AdminRoute';
-import { formatDateAU } from '@/lib/date-utils';
 import { isValidChronotype } from '@/lib/validators';
-import { prepareBigFiveForSave, filterEmptyValues, normalizeChronotype, normalizeGoals } from '@/lib/big-five-utils';
 import { getSession, clearSession } from '@/lib/auth-utils';
-import { toast } from "sonner";
+import { useProfileEditor } from '@/hooks/useProfileEditor';
 import { Button } from '@/components/ui/button';
 import { SectionCard } from '@/components/ui/section-card';
 import {
@@ -26,18 +24,26 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import type { BigFiveGroup, Profile } from '@/types/profile';
 
 function AdminEditProfileContent() {
   const params = useParams();
   const router = useRouter();
   const profileId = params.id as string;
 
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [initialProfile, setInitialProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [infoModal, setInfoModal] = useState<{ title: string; imageUrl: string } | null>(null);
   const [adminEmail, setAdminEmail] = useState<string>('');
+
+  const { profile, setProfile, saving, handlers } = useProfileEditor({
+    initialProfile,
+    onSaveSuccess: () => {
+      router.push('/users');
+    },
+    onSaveError: () => {
+      // Error already handled by the hook with toast
+    },
+  });
 
   useEffect(() => {
     const session = getSession();
@@ -54,10 +60,10 @@ function AdminEditProfileContent() {
           throw new Error('Failed to load profile');
         }
         const data = await res.json();
+        setInitialProfile(data);
         setProfile(data);
       } catch (error) {
         console.error('Error loading profile:', error);
-        toast.error('Failed to load profile');
         router.push('/users');
       } finally {
         setLoading(false);
@@ -67,73 +73,7 @@ function AdminEditProfileContent() {
     if (profileId) {
       loadProfile();
     }
-  }, [profileId, router]);
-
-  const handleBasicInfoChange = useCallback((field: string, value: string) => {
-    setProfile((prev) => prev ? { ...prev, [field]: value } : null);
-  }, []);
-
-  const handleCoreValuesChange = useCallback((values: string[]) => {
-    setProfile((prev) => prev ? { ...prev, coreValues: { values } } : null);
-  }, []);
-
-  const handleCharacterStrengthsChange = useCallback((strengths: string[]) => {
-    setProfile((prev) => prev ? { ...prev, characterStrengths: { strengths } } : null);
-  }, []);
-
-  const handleChronotypeChange = useCallback((types: ('Lion' | 'Bear' | 'Wolf' | 'Dolphin')[]) => {
-    setProfile((prev) => prev ? {
-      ...prev,
-      chronotype: {
-        types,
-        primaryType: types[0] || 'Lion',
-      },
-    } : null);
-  }, []);
-
-  const handleBigFiveChange = useCallback((data: BigFiveGroup[]) => {
-    setProfile((prev) => prev ? { ...prev, bigFiveData: data } : null);
-  }, []);
-
-  const handleGoalsChange = useCallback((goals: { period: string; professionalGoals?: string; personalGoals?: string }) => {
-    setProfile((prev) => prev ? { ...prev, goals } : null);
-  }, []);
-
-  const handleSave = useCallback(async () => {
-    if (!profile?.id) return;
-
-    setSaving(true);
-    try {
-      const res = await fetch(`/api/profiles/${profile.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: profile.name,
-          team: profile.team,
-          birthday: profile.birthday || undefined,
-          coreValues: filterEmptyValues(profile.coreValues?.values),
-          characterStrengths: filterEmptyValues(profile.characterStrengths?.strengths),
-          chronotype: normalizeChronotype(profile.chronotype),
-          bigFiveProfile: prepareBigFiveForSave(profile.bigFiveData),
-          goals: normalizeGoals(profile.goals),
-        }),
-      });
-
-      if (res.ok) {
-        toast.success('Profile saved successfully!');
-        router.push('/users');
-      } else {
-        const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('Save error:', errorData);
-        toast.error(errorData.error || 'Failed to save profile');
-      }
-    } catch (error) {
-      console.error('Error saving profile:', error);
-      toast.error('Error saving profile');
-    } finally {
-      setSaving(false);
-    }
-  }, [profile, router]);
+  }, [profileId, router, setProfile]);
 
   const coreValues = profile?.coreValues?.values || [];
   const characterStrengths = profile?.characterStrengths?.strengths || [];
@@ -200,7 +140,7 @@ function AdminEditProfileContent() {
                 Cancel
               </Button>
               <Button
-                onClick={handleSave}
+                onClick={handlers.handleSave}
                 disabled={saving || !profile?.id}
                 variant="brand"
                 className="w-full md:w-auto"
@@ -226,7 +166,7 @@ function AdminEditProfileContent() {
                   id="name"
                   type="text"
                   value={profile.name || ''}
-                  onChange={(e) => handleBasicInfoChange('name', e.target.value)}
+                  onChange={(e) => handlers.handleBasicInfoChange('name', e.target.value)}
                   placeholder="Full name"
                 />
               </div>
@@ -237,7 +177,7 @@ function AdminEditProfileContent() {
                   id="team"
                   type="text"
                   value={profile.team || ''}
-                  onChange={(e) => handleBasicInfoChange('team', e.target.value)}
+                  onChange={(e) => handlers.handleBasicInfoChange('team', e.target.value)}
                   placeholder="Team"
                 />
               </div>
@@ -252,7 +192,7 @@ function AdminEditProfileContent() {
                       const day = profile.birthday ? new Date(profile.birthday).getDate() : 1;
                       if (month) {
                         const year = new Date().getFullYear();
-                        handleBasicInfoChange('birthday', `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+                        handlers.handleBasicInfoChange('birthday', `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
                       }
                     }}
                   >
@@ -281,7 +221,7 @@ function AdminEditProfileContent() {
                       const month = profile.birthday ? new Date(profile.birthday).getMonth() + 1 : 1;
                       if (day) {
                         const year = new Date().getFullYear();
-                        handleBasicInfoChange('birthday', `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+                        handlers.handleBasicInfoChange('birthday', `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
                       }
                     }}
                   >
@@ -316,7 +256,7 @@ function AdminEditProfileContent() {
             <TextListInput
               label="List top 5 core values"
               values={coreValues}
-              onChange={handleCoreValuesChange}
+              onChange={handlers.handleCoreValuesChange}
               placeholderPrefix="Value"
             />
           </SectionCard>
@@ -338,7 +278,7 @@ function AdminEditProfileContent() {
             <TextListInput
               label="List top 5 signature strengths"
               values={characterStrengths}
-              onChange={handleCharacterStrengthsChange}
+              onChange={handlers.handleCharacterStrengthsChange}
               placeholderPrefix="Strength"
             />
           </SectionCard>
@@ -349,7 +289,7 @@ function AdminEditProfileContent() {
           <h2 className="text-2xl font-semibold text-foreground mb-4">Chronotype</h2>
           <ChronotypeSelector
             selected={selectedChronotypes}
-            onChange={handleChronotypeChange}
+            onChange={handlers.handleChronotypeChange}
             isReadOnly={false}
           />
         </section>
@@ -359,7 +299,7 @@ function AdminEditProfileContent() {
           <h2 className="text-2xl font-semibold text-foreground mb-4">Big 5 Factor of Personality</h2>
           <BigFiveSelector
             data={bigFiveData}
-            onChange={handleBigFiveChange}
+            onChange={handlers.handleBigFiveChange}
             isReadOnly={false}
           />
         </section>
@@ -367,7 +307,7 @@ function AdminEditProfileContent() {
         {/* Goals */}
         <GoalsSection
           goals={profile?.goals}
-          onChange={handleGoalsChange}
+          onChange={handlers.handleGoalsChange}
           isReadOnly={false}
         />
       </div>

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { Pencil, Info, Users, LogOut } from 'lucide-react';
+import { Info, Users, LogOut } from 'lucide-react';
 import { TextListInput } from '@/components/profile/TextListInput';
 import { ChronotypeSelector } from '@/components/profile/ChronotypeSelector';
 import { BigFiveSelector } from '@/components/profile/BigFiveSelector';
@@ -10,12 +10,10 @@ import { GoalsSection } from '@/components/profile/GoalsSection';
 import ResizableTraitModal from '@/components/profile/ResizableTraitModal';
 import { ChronotypeLoadingSpinner } from '@/components/LoadingSpinner';
 import ProtectedRoute from '@/components/ProtectedRoute';
-import { cn } from '@/lib/utils';
-import { formatDateAU, toInputDate, toMonthDay, fromMonthDay } from '@/lib/date-utils';
-import { isValidEmail, isValidChronotype } from '@/lib/validators';
+import { formatDateAU } from '@/lib/date-utils';
+import { isValidChronotype } from '@/lib/validators';
 import { getSession, clearSession, isAdminUser } from '@/lib/auth-utils';
-import { prepareBigFiveForSave, filterEmptyValues, normalizeChronotype, normalizeGoals } from '@/lib/big-five-utils';
-import { toast } from "sonner";
+import { useProfileEditor } from '@/hooks/useProfileEditor';
 import { Button } from '@/components/ui/button';
 import { SectionCard } from '@/components/ui/section-card';
 import {
@@ -27,17 +25,20 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import type { Subtrait, BigFiveGroup, Profile } from '@/types/profile';
 
 function ProfilePageContent() {
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [initialProfile, setInitialProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [editingEmail, setEditingEmail] = useState(false);
-  const [tempEmail, setTempEmail] = useState('');
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [infoModal, setInfoModal] = useState<{ title: string; imageUrl: string } | null>(null);
   const router = useRouter();
+
+  const { profile, setProfile, saving, handlers } = useProfileEditor({
+    initialProfile,
+    onSaveSuccess: () => {
+      setIsReadOnly(true);
+    },
+  });
 
   useEffect(() => {
     const session = getSession();
@@ -54,6 +55,7 @@ function ProfilePageContent() {
           body: JSON.stringify({ email: session?.email }),
         });
         const data = await res.json();
+        setInitialProfile(data);
         setProfile(data);
       } catch (error) {
         console.error('Error loading profile:', error);
@@ -63,109 +65,12 @@ function ProfilePageContent() {
     }
 
     loadProfile();
-  }, [router]);
+  }, [router, setProfile]);
 
   const handleLogout = useCallback(() => {
     clearSession();
     router.push('/');
   }, [router]);
-
-  // Memoized handlers
-  const handleBasicInfoChange = useCallback((field: string, value: string) => {
-    setProfile((prev) => prev ? { ...prev, [field]: value } : null);
-  }, []);
-
-  const handleCoreValuesChange = useCallback((values: string[]) => {
-    setProfile((prev) => prev ? { ...prev, coreValues: { values } } : null);
-  }, []);
-
-  const handleCharacterStrengthsChange = useCallback((strengths: string[]) => {
-    setProfile((prev) => prev ? { ...prev, characterStrengths: { strengths } } : null);
-  }, []);
-
-  const handleChronotypeChange = useCallback((types: ('Lion' | 'Bear' | 'Wolf' | 'Dolphin')[]) => {
-    setProfile((prev) => prev ? {
-      ...prev,
-      chronotype: {
-        types,
-        primaryType: types[0] || 'Lion',
-      },
-    } : null);
-  }, []);
-
-  const handleBigFiveChange = useCallback((data: BigFiveGroup[]) => {
-    setProfile((prev) => prev ? { ...prev, bigFiveData: data } : null);
-  }, []);
-
-  const handleGoalsChange = useCallback((goals: { period: string; professionalGoals?: string; personalGoals?: string }) => {
-    setProfile((prev) => prev ? { ...prev, goals } : null);
-  }, []);
-
-  const handleEmailEdit = useCallback(() => {
-    if (profile) {
-      setTempEmail(profile.email);
-      setEditingEmail(true);
-    }
-  }, [profile]);
-
-
-  const handleEmailSave = useCallback(() => {
-    if (!profile || !tempEmail.trim()) return;
-
-    const normalizedEmail = tempEmail.toLowerCase().trim();
-
-    // Validate email format
-    if (!isValidEmail(normalizedEmail)) {
-      toast.error('Please enter a valid email address');
-      return;
-    }
-
-    // Update profile state (session will be updated after successful save)
-    setProfile((prev) => prev ? { ...prev, email: normalizedEmail } : null);
-    setEditingEmail(false);
-  }, [profile, tempEmail]);
-
-  const handleEmailCancel = useCallback(() => {
-    setEditingEmail(false);
-    setTempEmail('');
-  }, []);
-
-  const handleSave = useCallback(async () => {
-    if (!profile?.id) return;
-
-    setSaving(true);
-    try {
-      const res = await fetch(`/api/profiles/${profile.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: profile.name,
-          team: profile.team,
-          birthday: profile.birthday || undefined,
-          coreValues: filterEmptyValues(profile.coreValues?.values),
-          characterStrengths: filterEmptyValues(profile.characterStrengths?.strengths),
-          chronotype: normalizeChronotype(profile.chronotype),
-          bigFiveProfile: prepareBigFiveForSave(profile.bigFiveData),
-          goals: normalizeGoals(profile.goals),
-        }),
-      });
-
-      if (res.ok) {
-        // Session is already updated with email, no need to update sessionStorage
-        toast.success('Profile saved successfully!');
-        setIsReadOnly(true);
-      } else {
-        const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));
-        console.error('Save error:', errorData);
-        toast.error(errorData.error || 'Failed to save profile');
-      }
-    } catch (error) {
-      console.error('Error saving profile:', error);
-      toast.error('Error saving profile');
-    } finally {
-      setSaving(false);
-    }
-  }, [profile]);
 
   // Simple property access - no memoization needed
   const coreValues = profile?.coreValues?.values || [];
@@ -241,7 +146,7 @@ function ProfilePageContent() {
                 </Button>
               ) : (
                 <Button
-                  onClick={handleSave}
+                  onClick={handlers.handleSave}
                   disabled={saving || !profile?.id}
                   variant="brand"
                   className="w-full md:w-auto"
@@ -337,7 +242,7 @@ function ProfilePageContent() {
                   id="name"
                   type="text"
                   value={profile.name || ''}
-                  onChange={(e) => handleBasicInfoChange('name', e.target.value)}
+                  onChange={(e) => handlers.handleBasicInfoChange('name', e.target.value)}
                   placeholder="Your full name"
                 />
               </div>
@@ -348,7 +253,7 @@ function ProfilePageContent() {
                   id="team"
                   type="text"
                   value={profile.team || ''}
-                  onChange={(e) => handleBasicInfoChange('team', e.target.value)}
+                  onChange={(e) => handlers.handleBasicInfoChange('team', e.target.value)}
                   placeholder="Your team"
                 />
               </div>
@@ -363,7 +268,7 @@ function ProfilePageContent() {
                       const day = profile.birthday ? new Date(profile.birthday).getDate() : 1;
                       if (month) {
                         const year = new Date().getFullYear();
-                        handleBasicInfoChange('birthday', `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+                        handlers.handleBasicInfoChange('birthday', `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
                       }
                     }}
                   >
@@ -392,7 +297,7 @@ function ProfilePageContent() {
                       const month = profile.birthday ? new Date(profile.birthday).getMonth() + 1 : 1;
                       if (day) {
                         const year = new Date().getFullYear();
-                        handleBasicInfoChange('birthday', `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
+                        handlers.handleBasicInfoChange('birthday', `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`);
                       }
                     }}
                   >
@@ -427,7 +332,7 @@ function ProfilePageContent() {
             <TextListInput
               label="List your top 5 core values"
               values={coreValues}
-              onChange={handleCoreValuesChange}
+              onChange={handlers.handleCoreValuesChange}
               placeholderPrefix="Value"
             />
           </SectionCard>
@@ -449,7 +354,7 @@ function ProfilePageContent() {
             <TextListInput
               label="List your top 5 signature strengths"
               values={characterStrengths}
-              onChange={handleCharacterStrengthsChange}
+              onChange={handlers.handleCharacterStrengthsChange}
               placeholderPrefix="Strength"
             />
           </SectionCard>
@@ -461,7 +366,7 @@ function ProfilePageContent() {
           <h2 className="text-2xl font-semibold text-foreground mb-4">Chronotype</h2>
           <ChronotypeSelector
             selected={selectedChronotypes}
-            onChange={handleChronotypeChange}
+            onChange={handlers.handleChronotypeChange}
             isReadOnly={isReadOnly}
           />
         </section>
@@ -471,7 +376,7 @@ function ProfilePageContent() {
           <h2 className="text-2xl font-semibold text-foreground mb-4">Big 5 Factor of Personality</h2>
           <BigFiveSelector
             data={bigFiveData}
-            onChange={handleBigFiveChange}
+            onChange={handlers.handleBigFiveChange}
             isReadOnly={isReadOnly}
           />
         </section>
@@ -479,7 +384,7 @@ function ProfilePageContent() {
         {/* Goals */}
         <GoalsSection
           goals={profile?.goals}
-          onChange={handleGoalsChange}
+          onChange={handlers.handleGoalsChange}
           isReadOnly={isReadOnly}
         />
       </div>
