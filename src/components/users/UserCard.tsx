@@ -38,7 +38,7 @@ const getChronotypeEmoji = (type: string) => {
   }
 };
 
-export const UserCard = memo(function UserCard({ id, name, email, team, jobTitle, chronotype, completeness, isAdmin, onEdit, onDelete }: UserCardProps) {
+export const UserCard = memo<UserCardProps>(function UserCard({ id, name, email, team, jobTitle, chronotype, completeness, isAdmin, onEdit, onDelete }) {
   const profileUrl = `/users/${id}`;
   const chronotypeTypes = chronotype?.types || [];
   const displayTypes = chronotypeTypes.slice(0, 4); // Show max 4 chronotypes
@@ -179,9 +179,9 @@ export const UserCard = memo(function UserCard({ id, name, email, team, jobTitle
   const chronotypesEqual =
     prevProps.chronotype?.primaryType === nextProps.chronotype?.primaryType &&
     prevProps.chronotype?.types?.length === nextProps.chronotype?.types?.length &&
-    prevProps.chronotype?.types?.every((type, i) =>
+    (prevProps.chronotype?.types?.every((type, i) =>
       type === nextProps.chronotype?.types?.[i]
-    );
+    ) ?? true); // Handle empty arrays
 
   return (
     prevProps.id === nextProps.id &&
