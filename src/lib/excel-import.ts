@@ -236,16 +236,51 @@ export async function importUsersFromExcel(
   if (resetDatabase) {
     const emails = validatedRows.map((v) => v.email);
 
-    // Delete all profiles NOT in the import file (except admin)
+    // Find profiles to delete (not in import file, except admin)
     const adminEmail = 'admin@openlaw.com.au'; // Admin user to preserve
-    await prisma.userProfile.deleteMany({
+    const profilesToDelete = await prisma.userProfile.findMany({
       where: {
         AND: [
           { email: { notIn: emails } },
           { email: { not: adminEmail } },
         ],
       },
+      select: { id: true },
     });
+
+    const profileIdsToDelete = profilesToDelete.map((p) => p.id);
+
+    if (profileIdsToDelete.length > 0) {
+      console.log(`[Import] Deleting ${profileIdsToDelete.length} profiles and related data...`);
+
+      // Delete related data first (explicitly, even though CASCADE should handle it)
+      // This ensures compatibility with connection poolers
+      await prisma.$transaction([
+        prisma.profileVersion.deleteMany({
+          where: { profileId: { in: profileIdsToDelete } },
+        }),
+        prisma.goals.deleteMany({
+          where: { profileId: { in: profileIdsToDelete } },
+        }),
+        prisma.bigFiveProfile.deleteMany({
+          where: { profileId: { in: profileIdsToDelete } },
+        }),
+        prisma.chronotype.deleteMany({
+          where: { profileId: { in: profileIdsToDelete } },
+        }),
+        prisma.characterStrengths.deleteMany({
+          where: { profileId: { in: profileIdsToDelete } },
+        }),
+        prisma.coreValues.deleteMany({
+          where: { profileId: { in: profileIdsToDelete } },
+        }),
+        prisma.userProfile.deleteMany({
+          where: { id: { in: profileIdsToDelete } },
+        }),
+      ]);
+
+      console.log(`[Import] Successfully deleted ${profileIdsToDelete.length} profiles`);
+    }
   }
 
   // Step 3: Fetch all existing profiles in one query
