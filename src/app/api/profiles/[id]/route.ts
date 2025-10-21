@@ -90,118 +90,122 @@ export async function PATCH(
 
     const { name, team, jobTitle, birthday, coreValues, characterStrengths, chronotype, bigFiveProfile, goals } = validationResult.data;
 
-    // Execute all updates within a transaction to ensure data consistency
-    // Increase timeout to 15 seconds for Supabase network latency
-    const updatedProfile = await prisma.$transaction(async (tx) => {
-      // Execute all updates in parallel within the transaction for better performance
-      await Promise.all([
-        // Update basic profile fields
-        tx.userProfile.update({
-          where: { id },
-          data: {
-            ...(name && { name }),
-            ...(team && { team }),
-            ...(jobTitle !== undefined && { jobTitle }),
-            ...(birthday && { birthday: new Date(birthday) }),
-          },
-        }),
-
-        // Update core values if provided
-        coreValues ? tx.coreValues.upsert({
-          where: { profileId: id },
-          create: {
-            profileId: id,
-            values: coreValues,
-          },
-          update: {
-            values: coreValues,
-          },
-        }) : Promise.resolve(null),
-
-        // Update character strengths if provided
-        characterStrengths ? tx.characterStrengths.upsert({
-          where: { profileId: id },
-          create: {
-            profileId: id,
-            strengths: characterStrengths,
-          },
-          update: {
-            strengths: characterStrengths,
-          },
-        }) : Promise.resolve(null),
-
-        // Update chronotype if provided, or delete if null
-        chronotype === null
-          ? tx.chronotype.deleteMany({
-              where: { profileId: id },
-            })
-          : chronotype
-          ? tx.chronotype.upsert({
-              where: { profileId: id },
-              create: {
-                profileId: id,
-                types: chronotype.types as ChronotypeAnimal[],
-                primaryType: chronotype.primaryType as ChronotypeAnimal,
-              },
-              update: {
-                types: chronotype.types as ChronotypeAnimal[],
-                primaryType: chronotype.primaryType as ChronotypeAnimal,
-              },
-            })
-          : Promise.resolve(null),
-
-        // Update Big Five if provided
-        bigFiveProfile ? tx.bigFiveProfile.upsert({
-          where: { profileId: id },
-          create: {
-            profileId: id,
-            opennessData: bigFiveProfile.opennessData || {},
-            conscientiousnessData: bigFiveProfile.conscientiousnessData || {},
-            extraversionData: bigFiveProfile.extraversionData || {},
-            agreeablenessData: bigFiveProfile.agreeablenessData || {},
-            neuroticismData: bigFiveProfile.neuroticismData || {},
-          },
-          update: {
-            opennessData: bigFiveProfile.opennessData || {},
-            conscientiousnessData: bigFiveProfile.conscientiousnessData || {},
-            extraversionData: bigFiveProfile.extraversionData || {},
-            agreeablenessData: bigFiveProfile.agreeablenessData || {},
-            neuroticismData: bigFiveProfile.neuroticismData || {},
-          },
-        }) : Promise.resolve(null),
-
-        // Update goals if provided
-        goals ? tx.goals.upsert({
-          where: { profileId: id },
-          create: {
-            profileId: id,
-            period: goals.period,
-            professionalGoals: goals.professionalGoals || null,
-            personalGoals: goals.personalGoals || null,
-          },
-          update: {
-            period: goals.period,
-            professionalGoals: goals.professionalGoals || null,
-            personalGoals: goals.personalGoals || null,
-          },
-        }) : Promise.resolve(null),
-      ]);
-
-      // Fetch and return the complete updated profile with all relations
-      return tx.userProfile.findUnique({
+    // OPTIMIZED: Execute all updates in parallel WITHOUT transaction
+    // Reasoning: Each update is independent and atomic at the row level
+    // Database constraints (CASCADE) ensure referential integrity
+    // This eliminates transaction overhead and timeout issues with Supabase pooler
+    await Promise.all([
+      // Update basic profile fields
+      prisma.userProfile.update({
         where: { id },
-        include: {
-          coreValues: true,
-          characterStrengths: true,
-          chronotype: true,
-          bigFiveProfile: true,
-          goals: true,
+        data: {
+          ...(name && { name }),
+          ...(team && { team }),
+          ...(jobTitle !== undefined && { jobTitle }),
+          ...(birthday && { birthday: new Date(birthday) }),
         },
-      });
-    }, {
-      maxWait: 15000, // Maximum time to wait for a transaction slot (15s)
-      timeout: 15000,  // Maximum time the transaction can run (15s)
+      }),
+
+      // Update core values if provided
+      coreValues ? prisma.coreValues.upsert({
+        where: { profileId: id },
+        create: {
+          profileId: id,
+          values: coreValues,
+        },
+        update: {
+          values: coreValues,
+        },
+      }) : Promise.resolve(null),
+
+      // Update character strengths if provided
+      characterStrengths ? prisma.characterStrengths.upsert({
+        where: { profileId: id },
+        create: {
+          profileId: id,
+          strengths: characterStrengths,
+        },
+        update: {
+          strengths: characterStrengths,
+        },
+      }) : Promise.resolve(null),
+
+      // Update chronotype if provided, or delete if null
+      chronotype === null
+        ? prisma.chronotype.deleteMany({
+            where: { profileId: id },
+          })
+        : chronotype
+        ? prisma.chronotype.upsert({
+            where: { profileId: id },
+            create: {
+              profileId: id,
+              types: chronotype.types as ChronotypeAnimal[],
+              primaryType: chronotype.primaryType as ChronotypeAnimal,
+            },
+            update: {
+              types: chronotype.types as ChronotypeAnimal[],
+              primaryType: chronotype.primaryType as ChronotypeAnimal,
+            },
+          })
+        : Promise.resolve(null),
+
+      // Update Big Five if provided
+      bigFiveProfile ? prisma.bigFiveProfile.upsert({
+        where: { profileId: id },
+        create: {
+          profileId: id,
+          opennessData: bigFiveProfile.opennessData || {},
+          conscientiousnessData: bigFiveProfile.conscientiousnessData || {},
+          extraversionData: bigFiveProfile.extraversionData || {},
+          agreeablenessData: bigFiveProfile.agreeablenessData || {},
+          neuroticismData: bigFiveProfile.neuroticismData || {},
+        },
+        update: {
+          opennessData: bigFiveProfile.opennessData || {},
+          conscientiousnessData: bigFiveProfile.conscientiousnessData || {},
+          extraversionData: bigFiveProfile.extraversionData || {},
+          agreeablenessData: bigFiveProfile.agreeablenessData || {},
+          neuroticismData: bigFiveProfile.neuroticismData || {},
+        },
+      }) : Promise.resolve(null),
+
+      // Update goals if provided
+      goals ? prisma.goals.upsert({
+        where: { profileId: id },
+        create: {
+          profileId: id,
+          period: goals.period,
+          professionalGoals: goals.professionalGoals || null,
+          personalGoals: goals.personalGoals || null,
+        },
+        update: {
+          period: goals.period,
+          professionalGoals: goals.professionalGoals || null,
+          personalGoals: goals.personalGoals || null,
+        },
+      }) : Promise.resolve(null),
+    ]);
+
+    // Fetch and return the complete updated profile with all relations
+    // Separate query outside parallel updates for cleaner error handling
+    const updatedProfile = await prisma.userProfile.findUnique({
+      where: { id },
+      include: {
+        coreValues: true,
+        characterStrengths: true,
+        chronotype: true,
+        bigFiveProfile: true,
+        goals: true,
+      },
     });
+
+    if (!updatedProfile) {
+      return NextResponse.json(
+        { error: 'Profile not found after update' },
+        { status: 404 }
+      );
+    }
 
     return NextResponse.json(updatedProfile);
   } catch (error) {

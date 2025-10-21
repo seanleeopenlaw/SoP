@@ -3,7 +3,9 @@
 import { memo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { Briefcase } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 interface UserCardProps {
   id: string;
@@ -116,14 +118,19 @@ export const UserCard = memo(function UserCard({ id, name, email, team, jobTitle
         </div>
 
         {/* Team and Job Title */}
-        {team && (
+        {(team || jobTitle) && (
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center px-2 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium">
-              {team}
-            </span>
-            <span className="text-xs text-muted-foreground">
-              {jobTitle || 'Senior Developer'}
-            </span>
+            {team && (
+              <span className="inline-flex items-center px-2 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium">
+                {team}
+              </span>
+            )}
+            {jobTitle && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <Briefcase className="w-3.5 h-3.5" />
+                <span>{jobTitle}</span>
+              </div>
+            )}
           </div>
         )}
 
@@ -149,7 +156,8 @@ export const UserCard = memo(function UserCard({ id, name, email, team, jobTitle
           <div className="flex gap-2">
             <button
               onClick={handleEdit}
-              className="flex-1 py-2 px-4 rounded-md text-center bg-blue-500/10 text-blue-600 hover:bg-blue-500 hover:text-white font-medium text-sm transition-colors duration-200"
+              className="flex-1 py-2 px-4 text-sm font-medium rounded-md bg-primary/10 text-primary hover:bg-primary/20 transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+              type="button"
             >
               Edit
             </button>
@@ -161,23 +169,20 @@ export const UserCard = memo(function UserCard({ id, name, email, team, jobTitle
             </button>
           </div>
         )}
-
-        {/* View Label */}
-        <div
-          className={cn(
-            "w-full py-2 px-4 rounded-md text-center",
-            "bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground",
-            "font-medium text-sm transition-colors duration-200",
-            "group-hover:shadow-md"
-          )}
-        >
-          View Profile
-        </div>
       </div>
     </Link>
   );
 }, (prevProps, nextProps) => {
   // Custom comparator: only re-render if these specific props change
+
+  // Deep compare chronotype without expensive JSON.stringify
+  const chronotypesEqual =
+    prevProps.chronotype?.primaryType === nextProps.chronotype?.primaryType &&
+    prevProps.chronotype?.types?.length === nextProps.chronotype?.types?.length &&
+    prevProps.chronotype?.types?.every((type, i) =>
+      type === nextProps.chronotype?.types?.[i]
+    );
+
   return (
     prevProps.id === nextProps.id &&
     prevProps.name === nextProps.name &&
@@ -186,6 +191,6 @@ export const UserCard = memo(function UserCard({ id, name, email, team, jobTitle
     prevProps.jobTitle === nextProps.jobTitle &&
     prevProps.completeness === nextProps.completeness &&
     prevProps.isAdmin === nextProps.isAdmin &&
-    JSON.stringify(prevProps.chronotype) === JSON.stringify(nextProps.chronotype)
+    chronotypesEqual
   );
 });

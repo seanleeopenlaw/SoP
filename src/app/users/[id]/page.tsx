@@ -265,10 +265,12 @@ export default function UserProfilePage() {
                   <span className="text-muted-foreground">Team:</span>{' '}
                   <span className="text-foreground font-medium">{profile.team || 'Not set'}</span>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">Job Title:</span>{' '}
-                  <span className="text-foreground font-medium">{profile.jobTitle || 'Senior Developer'}</span>
-                </div>
+                {profile.jobTitle && (
+                  <div>
+                    <span className="text-muted-foreground">Job Title:</span>{' '}
+                    <span className="text-foreground font-medium">{profile.jobTitle}</span>
+                  </div>
+                )}
                 <div>
                   <span className="text-muted-foreground">Birthday:</span>{' '}
                   <span className="text-foreground font-medium">

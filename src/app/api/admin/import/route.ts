@@ -5,8 +5,18 @@ import { TEMPLATE_VERSION, TEMPLATE_UPDATED_DATE } from '@/lib/template-version'
 
 export async function POST(request: Request) {
   try {
-    // Note: Admin-only access is enforced by AdminRoute component on client-side
-    // In production, add server-side session validation here
+    // Server-side admin verification
+    const { verifyAdminAccess } = await import('@/lib/server-auth');
+    const isAdmin = await verifyAdminAccess(request);
+
+    if (!isAdmin) {
+      console.error('[Import] Unauthorized access attempt');
+      return NextResponse.json(
+        { error: 'Unauthorized. Admin access required.' },
+        { status: 403 }
+      );
+    }
+
     console.log('[Import] Starting import process...');
 
     // Parse the multipart form data
@@ -133,6 +143,7 @@ export async function GET() {
       'Email',
       'Name',
       'Team',
+      'JobTitle',
       'Birthday',
       'Chronotype',
       'CoreValue1',
@@ -235,6 +246,7 @@ export async function GET() {
       'john.doe@example.com',
       'John Doe',
       'Engineering',
+      'Senior Software Engineer',
       '1990-01-15',
       'Lion',
       'Innovation',
@@ -261,6 +273,7 @@ export async function GET() {
       { wch: 25 }, // Email
       { wch: 20 }, // Name
       { wch: 15 }, // Team
+      { wch: 25 }, // JobTitle
       { wch: 12 }, // Birthday
       { wch: 12 }, // Chronotype
     ];

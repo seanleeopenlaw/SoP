@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Info, ArrowLeft, LogOut } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { TextListInput } from '@/components/profile/TextListInput';
 import { ChronotypeSelector } from '@/components/profile/ChronotypeSelector';
 import { BigFiveSelector } from '@/components/profile/BigFiveSelector';
@@ -28,6 +29,7 @@ import { Label } from '@/components/ui/label';
 function AdminEditProfileContent() {
   const params = useParams();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const profileId = params.id as string;
 
   const [initialProfile, setInitialProfile] = useState<any>(null);
@@ -37,7 +39,11 @@ function AdminEditProfileContent() {
 
   const { profile, setProfile, saving, handlers } = useProfileEditor({
     initialProfile,
-    onSaveSuccess: () => {
+    onSaveSuccess: async () => {
+      // Invalidate cache - refetch will happen automatically on mount
+      await queryClient.invalidateQueries({
+        queryKey: ['profiles'],
+      });
       router.push('/users');
     },
     onSaveError: () => {
@@ -157,7 +163,7 @@ function AdminEditProfileContent() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Basic Information */}
           <SectionCard size="compact">
-            <h2 className="text-xl font-bold mb-4">Basic Information</h2>
+            <h2 className="text-xl font-bold mb-4">Basic Info</h2>
 
             <div className="space-y-4">
               <div className="space-y-2">
@@ -190,6 +196,7 @@ function AdminEditProfileContent() {
                   value={profile.jobTitle || ''}
                   onChange={(e) => handlers.handleBasicInfoChange('jobTitle', e.target.value)}
                   placeholder="e.g., Senior Developer"
+                  maxLength={255}
                 />
               </div>
 

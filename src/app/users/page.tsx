@@ -57,7 +57,10 @@ export default function UsersPage() {
     getNextPageParam: (lastPage) =>
       lastPage.pagination?.hasNext ? lastPage.pagination.page + 1 : undefined,
     initialPageParam: 1,
-    staleTime: 60 * 1000, // 60 seconds
+    staleTime: 1 * 60 * 1000, // 1 minute - reasonable freshness
+    gcTime: 5 * 60 * 1000, // 5 minutes - keep in background cache
+    refetchOnMount: true, // Refetch if stale
+    refetchOnReconnect: true, // Refetch on network reconnect
   });
 
   // Flatten all pages into single profiles array
@@ -107,7 +110,8 @@ export default function UsersPage() {
     const query = searchQuery.toLowerCase();
     return profiles.filter(profile =>
       profile.name.toLowerCase().includes(query) ||
-      profile.email.toLowerCase().includes(query)
+      profile.email.toLowerCase().includes(query) ||
+      profile.jobTitle?.toLowerCase().includes(query)
     );
   }, [searchQuery, profiles]);
 

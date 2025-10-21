@@ -39,6 +39,7 @@ export async function GET(request: Request) {
           email: true,
           name: true,
           team: true,
+          jobTitle: true,
           birthday: true,
           createdAt: true,
           updatedAt: true,

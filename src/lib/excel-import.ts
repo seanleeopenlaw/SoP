@@ -38,6 +38,7 @@ async function updateExistingUser(
   const updateData: {
     name: string;
     team?: string | null;
+    jobTitle?: string | null;
     birthday?: Date | null;
   } = {
     name, // Name is always required
@@ -46,6 +47,11 @@ async function updateExistingUser(
   // Only update team if provided in Excel
   if (row.Team !== undefined && row.Team !== null && row.Team.trim() !== '') {
     updateData.team = row.Team;
+  }
+
+  // Only update jobTitle if provided in Excel
+  if (row.JobTitle !== undefined && row.JobTitle !== null && row.JobTitle.trim() !== '') {
+    updateData.jobTitle = row.JobTitle;
   }
 
   // Only update birthday if provided in Excel
@@ -316,6 +322,7 @@ export async function importUsersFromExcel(
           email: v.email,
           name: v.name,
           team: v.row.Team || null,
+          jobTitle: v.row.JobTitle || null,
           birthday: parseBirthday(v.row.Birthday),
         })),
         skipDuplicates: true,
@@ -386,6 +393,7 @@ export async function importUsersFromExcel(
               email: validatedRow.email,
               name: validatedRow.name,
               team: validatedRow.row.Team || null,
+              jobTitle: validatedRow.row.JobTitle || null,
               birthday: parsedBirthday,
             },
           });

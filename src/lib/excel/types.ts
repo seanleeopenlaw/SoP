@@ -2,6 +2,7 @@ export interface ExcelRow {
   Email: string;
   Name: string;
   Team?: string;
+  JobTitle?: string;
   Birthday?: string;
   Chronotype?: string;
   CoreValue1?: string;

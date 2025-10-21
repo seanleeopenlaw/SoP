@@ -151,8 +151,18 @@ function AdminImportPageContent() {
     formData.append('resetDatabase', resetDatabase.toString());
 
     try {
+      // Add auth headers for server-side verification
+      const session = getSession();
+      const headers: HeadersInit = {};
+      if (session) {
+        headers['x-user-email'] = session.email;
+        headers['x-user-name'] = session.name;
+        headers['x-user-admin'] = session.isAdmin.toString();
+      }
+
       const response = await fetch('/api/admin/import', {
         method: 'POST',
+        headers,
         body: formData,
       });
 

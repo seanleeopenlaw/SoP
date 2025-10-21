@@ -11,7 +11,7 @@ import type { Profile, BigFiveGroup } from '@/types/profile';
 
 interface UseProfileEditorOptions {
   initialProfile: Profile | null;
-  onSaveSuccess?: () => void;
+  onSaveSuccess?: () => void | Promise<void>;
   onSaveError?: (error: Error) => void;
 }
 
@@ -82,7 +82,7 @@ export function useProfileEditor({
         body: JSON.stringify({
           name: profile.name,
           team: profile.team,
-          jobTitle: profile.jobTitle,
+          jobTitle: profile.jobTitle?.trim() || null, // Normalize empty strings to null
           birthday: profile.birthday || undefined,
           coreValues: filterEmptyValues(profile.coreValues?.values),
           characterStrengths: filterEmptyValues(profile.characterStrengths?.strengths),
@@ -94,7 +94,7 @@ export function useProfileEditor({
 
       if (res.ok) {
         toast.success('Profile saved successfully!');
-        onSaveSuccess?.();
+        await onSaveSuccess?.();
         return true;
       } else {
         const errorData = await res.json().catch(() => ({ error: 'Unknown error' }));

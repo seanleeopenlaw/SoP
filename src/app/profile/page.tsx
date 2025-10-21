@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Info, Users, LogOut } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { TextListInput } from '@/components/profile/TextListInput';
 import { ChronotypeSelector } from '@/components/profile/ChronotypeSelector';
 import { BigFiveSelector } from '@/components/profile/BigFiveSelector';
@@ -32,10 +33,15 @@ function ProfilePageContent() {
   const [isReadOnly, setIsReadOnly] = useState(false);
   const [infoModal, setInfoModal] = useState<{ title: string; imageUrl: string } | null>(null);
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const { profile, setProfile, saving, handlers } = useProfileEditor({
     initialProfile,
-    onSaveSuccess: () => {
+    onSaveSuccess: async () => {
+      // Invalidate cache - refetch will happen automatically on mount
+      await queryClient.invalidateQueries({
+        queryKey: ['profiles'],
+      });
       setIsReadOnly(true);
     },
   });
@@ -173,6 +179,12 @@ function ProfilePageContent() {
                     <span className="text-muted-foreground">Team:</span>{' '}
                     <span className="text-foreground font-medium">{profile.team || 'Not set'}</span>
                   </div>
+                  {profile.jobTitle && (
+                    <div>
+                      <span className="text-muted-foreground">Job Title:</span>{' '}
+                      <span className="text-foreground font-medium">{profile.jobTitle}</span>
+                    </div>
+                  )}
                   <div>
                     <span className="text-muted-foreground">Birthday:</span>{' '}
                     <span className="text-foreground font-medium">{formatDateAU(profile.birthday)}</span>
@@ -233,7 +245,7 @@ function ProfilePageContent() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Basic Information */}
           <SectionCard size="compact">
-            <h2 className="text-xl font-bold mb-4">Basic Information</h2>
+            <h2 className="text-xl font-bold mb-4">Basic Info</h2>
 
             <div className="space-y-4">
               <div className="space-y-2">
@@ -255,6 +267,18 @@ function ProfilePageContent() {
                   value={profile.team || ''}
                   onChange={(e) => handlers.handleBasicInfoChange('team', e.target.value)}
                   placeholder="Your team"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="jobTitle">Job Title</Label>
+                <Input
+                  id="jobTitle"
+                  type="text"
+                  value={profile.jobTitle || ''}
+                  onChange={(e) => handlers.handleBasicInfoChange('jobTitle', e.target.value)}
+                  placeholder="e.g., Senior Developer"
+                  maxLength={255}
                 />
               </div>
 
