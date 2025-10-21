@@ -258,6 +258,7 @@ export default function UsersPage() {
                   name={profile.name}
                   email={profile.email}
                   team={profile.team}
+                  jobTitle={profile.jobTitle}
                   chronotype={profile.chronotype}
                   completeness={calculateProfileCompleteness(profile)}
                   isAdmin={isAdmin}

@@ -10,6 +10,7 @@ interface UserCardProps {
   name: string;
   email: string;
   team?: string | null;
+  jobTitle?: string | null;
   chronotype?: {
     types: string[];
     primaryType: string;
@@ -35,7 +36,7 @@ const getChronotypeEmoji = (type: string) => {
   }
 };
 
-export const UserCard = memo(function UserCard({ id, name, email, team, chronotype, completeness, isAdmin, onEdit, onDelete }: UserCardProps) {
+export const UserCard = memo(function UserCard({ id, name, email, team, jobTitle, chronotype, completeness, isAdmin, onEdit, onDelete }: UserCardProps) {
   const profileUrl = `/users/${id}`;
   const chronotypeTypes = chronotype?.types || [];
   const displayTypes = chronotypeTypes.slice(0, 4); // Show max 4 chronotypes
@@ -114,12 +115,14 @@ export const UserCard = memo(function UserCard({ id, name, email, team, chronoty
           </div>
         </div>
 
-        {/* Team */}
+        {/* Team and Job Title */}
         {team && (
           <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-muted-foreground">Team:</span>
             <span className="inline-flex items-center px-2 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium">
               {team}
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {jobTitle || 'Senior Developer'}
             </span>
           </div>
         )}
@@ -180,6 +183,7 @@ export const UserCard = memo(function UserCard({ id, name, email, team, chronoty
     prevProps.name === nextProps.name &&
     prevProps.email === nextProps.email &&
     prevProps.team === nextProps.team &&
+    prevProps.jobTitle === nextProps.jobTitle &&
     prevProps.completeness === nextProps.completeness &&
     prevProps.isAdmin === nextProps.isAdmin &&
     JSON.stringify(prevProps.chronotype) === JSON.stringify(nextProps.chronotype)

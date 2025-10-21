@@ -82,6 +82,7 @@ export function useProfileEditor({
         body: JSON.stringify({
           name: profile.name,
           team: profile.team,
+          jobTitle: profile.jobTitle,
           birthday: profile.birthday || undefined,
           coreValues: filterEmptyValues(profile.coreValues?.values),
           characterStrengths: filterEmptyValues(profile.characterStrengths?.strengths),

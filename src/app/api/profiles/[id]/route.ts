@@ -88,7 +88,7 @@ export async function PATCH(
       );
     }
 
-    const { name, team, birthday, coreValues, characterStrengths, chronotype, bigFiveProfile, goals } = validationResult.data;
+    const { name, team, jobTitle, birthday, coreValues, characterStrengths, chronotype, bigFiveProfile, goals } = validationResult.data;
 
     // Execute all updates within a transaction to ensure data consistency
     // Increase timeout to 15 seconds for Supabase network latency
@@ -101,6 +101,7 @@ export async function PATCH(
           data: {
             ...(name && { name }),
             ...(team && { team }),
+            ...(jobTitle !== undefined && { jobTitle }),
             ...(birthday && { birthday: new Date(birthday) }),
           },
         }),

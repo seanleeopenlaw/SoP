@@ -54,6 +54,7 @@ const goalsSchema = z.object({
 export const profileUpdateSchema = z.object({
   name: z.string().min(1, 'Name is required').max(255).optional(),
   team: z.string().max(255).optional(),
+  jobTitle: z.string().max(255).optional(),
   birthday: z.string().datetime().or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/)).optional(),
   coreValues: z.array(z.string()).max(5).optional(),
   characterStrengths: z.array(z.string()).max(5).optional(),

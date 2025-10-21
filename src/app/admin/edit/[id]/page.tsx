@@ -183,6 +183,17 @@ function AdminEditProfileContent() {
               </div>
 
               <div className="space-y-2">
+                <Label htmlFor="jobTitle">Job Title</Label>
+                <Input
+                  id="jobTitle"
+                  type="text"
+                  value={profile.jobTitle || ''}
+                  onChange={(e) => handlers.handleBasicInfoChange('jobTitle', e.target.value)}
+                  placeholder="e.g., Senior Developer"
+                />
+              </div>
+
+              <div className="space-y-2">
                 <Label>Birthday</Label>
                 <div className="flex gap-3">
                   <Select

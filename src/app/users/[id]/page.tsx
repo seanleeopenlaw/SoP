@@ -49,6 +49,7 @@ interface Profile {
   name: string;
   email: string;
   team: string | null;
+  jobTitle?: string | null;
   birthday: string | null;
   chronotype: {
     types: ChronotypeType[];
@@ -263,6 +264,10 @@ export default function UserProfilePage() {
                 <div>
                   <span className="text-muted-foreground">Team:</span>{' '}
                   <span className="text-foreground font-medium">{profile.team || 'Not set'}</span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Job Title:</span>{' '}
+                  <span className="text-foreground font-medium">{profile.jobTitle || 'Senior Developer'}</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Birthday:</span>{' '}

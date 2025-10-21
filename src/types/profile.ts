@@ -22,6 +22,7 @@ export interface UserProfile {
   email?: string | null;
   name: string;
   team?: string | null;
+  jobTitle?: string | null;
   birthday?: Date | null;
   avatarUrl?: string | null;
   createdAt: Date;
@@ -97,6 +98,7 @@ export interface Profile {
   email: string;
   name: string;
   team: string;
+  jobTitle?: string | null;
   birthday: string | null;
   coreValues?: { values: string[] };
   characterStrengths?: { strengths: string[] };
