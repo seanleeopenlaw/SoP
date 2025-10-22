@@ -8,9 +8,20 @@ import { parseScore } from './parsers';
 export function normalizeBigFiveLevel(level?: string | number | any): 'High' | 'Average' | 'Low' | undefined {
   if (!level) return undefined;
 
-  // Convert to string if it's not already (handles numbers, booleans, etc.)
-  const levelStr = typeof level === 'string' ? level : String(level);
-  const normalized = levelStr.toLowerCase().trim();
+  // Reject numbers and booleans - these are data quality issues
+  if (typeof level === 'number') {
+    throw new Error(`Invalid level value: "${level}". Expected "High", "Average", or "Low", not a number.`);
+  }
+  if (typeof level === 'boolean') {
+    throw new Error(`Invalid level value: "${level}". Expected "High", "Average", or "Low", not a boolean.`);
+  }
+
+  // Only accept strings
+  if (typeof level !== 'string') {
+    throw new Error(`Invalid level type: ${typeof level}. Expected string value "High", "Average", or "Low".`);
+  }
+
+  const normalized = level.toLowerCase().trim();
 
   // Handle "Neutral" as "Average"
   if (normalized === 'neutral') return 'Average';
