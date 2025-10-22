@@ -32,6 +32,7 @@ import { ChronotypeLoadingSpinner } from '@/components/LoadingSpinner';
 import { formatDateAU } from '@/lib/date-utils';
 import { SectionCard } from '@/components/ui/section-card';
 import type { BigFiveGroup } from '@/types/profile';
+import { SECTION_TITLE_SIZE } from '@/config/ui';
 
 interface BigFiveProfileData {
   id?: string;
@@ -334,7 +335,7 @@ export default function UserProfilePage() {
 
         {/* Chronotype */}
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-4" style={{ color: '#184DDA' }}>Chronotype</h2>
+          <h2 className={`${SECTION_TITLE_SIZE} font-semibold mb-4`} style={{ color: '#184DDA' }}>Chronotype</h2>
           <ChronotypeSelector
             selected={profile.chronotype?.types || []}
             onChange={() => {}}
@@ -345,7 +346,7 @@ export default function UserProfilePage() {
         {/* Big Five */}
         {hasBigFive ? (
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-big-five mb-4">
+            <h2 className={`${SECTION_TITLE_SIZE} font-semibold text-big-five mb-4`}>
               Big 5 Factor of Personality
             </h2>
             {bigFiveData && bigFiveData.length > 0 ? (
@@ -364,7 +365,7 @@ export default function UserProfilePage() {
           </div>
         ) : (
           <div className="mb-8">
-            <h2 className="text-xl font-semibold text-big-five mb-4">
+            <h2 className={`${SECTION_TITLE_SIZE} font-semibold text-big-five mb-4`}>
               Big 5 Factor of Personality
             </h2>
             <SectionCard>

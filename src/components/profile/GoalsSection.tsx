@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
+import { SECTION_TITLE_SIZE } from '@/config/ui';
 
 interface GoalsSectionProps {
   goals?: {
@@ -13,6 +14,7 @@ interface GoalsSectionProps {
   } | null;
   onChange: (goals: { period: string; professionalGoals?: string; personalGoals?: string }) => void;
   isReadOnly?: boolean;
+  titleClassName?: string;
 }
 
 // Debounce utility
@@ -24,7 +26,7 @@ function debounce<T extends (...args: any[]) => any>(func: T, delay: number): T 
   }) as T;
 }
 
-export function GoalsSection({ goals, onChange, isReadOnly = false }: GoalsSectionProps) {
+export function GoalsSection({ goals, onChange, isReadOnly = false, titleClassName = SECTION_TITLE_SIZE }: GoalsSectionProps) {
   const [period, setPeriod] = useState(goals?.period || '');
   const [professionalGoals, setProfessionalGoals] = useState(goals?.professionalGoals || '');
   const [personalGoals, setPersonalGoals] = useState(goals?.personalGoals || '');
@@ -75,7 +77,7 @@ export function GoalsSection({ goals, onChange, isReadOnly = false }: GoalsSecti
   if (isReadOnly) {
     return (
       <section className="border-2 rounded-lg p-6 border-border bg-card">
-        <h2 className="text-2xl font-semibold text-foreground mb-4">
+        <h2 className={`${titleClassName} font-semibold text-foreground mb-4`}>
           {period ? `My Goals for ${period}` : 'My Goals'}
         </h2>
 
@@ -108,7 +110,7 @@ export function GoalsSection({ goals, onChange, isReadOnly = false }: GoalsSecti
 
   return (
     <section className="border-2 rounded-lg p-6 border-border bg-card">
-      <h2 className="text-2xl font-semibold text-foreground mb-4">
+      <h2 className={`${titleClassName} font-semibold text-foreground mb-4`}>
         {period ? `My Goals for ${period}` : 'My Goals'}
       </h2>
 

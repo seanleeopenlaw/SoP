@@ -25,6 +25,7 @@ import {
 } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { SECTION_TITLE_SIZE } from '@/config/ui';
 
 function AdminEditProfileContent() {
   const params = useParams();
@@ -304,7 +305,7 @@ function AdminEditProfileContent() {
 
         {/* Chronotype */}
         <section>
-          <h2 className="text-2xl font-semibold mb-4" style={{ color: '#184DDA' }}>Chronotype</h2>
+          <h2 className={`${SECTION_TITLE_SIZE} font-semibold mb-4`} style={{ color: '#184DDA' }}>Chronotype</h2>
           <ChronotypeSelector
             selected={selectedChronotypes}
             onChange={handlers.handleChronotypeChange}
@@ -314,7 +315,7 @@ function AdminEditProfileContent() {
 
         {/* Big 5 Personality */}
         <section>
-          <h2 className="text-2xl font-semibold text-foreground mb-4">Big 5 Factor of Personality</h2>
+          <h2 className={`${SECTION_TITLE_SIZE} font-semibold text-foreground mb-4`}>Big 5 Factor of Personality</h2>
           <BigFiveSelector
             data={bigFiveData}
             onChange={handlers.handleBigFiveChange}
