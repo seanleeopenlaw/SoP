@@ -83,13 +83,19 @@ export function ChronotypeSelector({
         </div>
       )}
 
-      <div className={cn(
-        "grid gap-4",
-        isReadOnly ? "grid-cols-1 md:grid-cols-2" : "grid-cols-2 md:grid-cols-4"
-      )}>
-        {chronotypes
-          .filter((chronotype) => !isReadOnly || selected.includes(chronotype.type))
-          .map((chronotype) => {
+      {/* Show "Not set" placeholder in read-only mode when no chronotypes selected */}
+      {isReadOnly && selected.length === 0 ? (
+        <div className="rounded-lg border-2 border-border bg-card p-6">
+          <div className="text-center text-muted-foreground italic">Not set</div>
+        </div>
+      ) : (
+        <div className={cn(
+          "grid gap-4",
+          isReadOnly ? "grid-cols-1 md:grid-cols-2" : "grid-cols-2 md:grid-cols-4"
+        )}>
+          {chronotypes
+            .filter((chronotype) => !isReadOnly || selected.includes(chronotype.type))
+            .map((chronotype) => {
           const isSelected = selected.includes(chronotype.type);
 
           return (
@@ -196,7 +202,8 @@ export function ChronotypeSelector({
             </div>
           );
         })}
-      </div>
+        </div>
+      )}
 
       {/* Fullscreen Modal */}
       {modalType && (
