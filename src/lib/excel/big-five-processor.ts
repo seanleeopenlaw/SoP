@@ -5,10 +5,12 @@ import { parseScore } from './parsers';
 // Helper function to normalize Big Five levels (case-insensitive with fuzzy matching)
 // Accepts both "Average" and "Neutral" as "Average"
 // Also handles common typos like "Hgh" -> "High", "Llow" -> "Low"
-export function normalizeBigFiveLevel(level?: string): 'High' | 'Average' | 'Low' | undefined {
+export function normalizeBigFiveLevel(level?: string | number | any): 'High' | 'Average' | 'Low' | undefined {
   if (!level) return undefined;
 
-  const normalized = level.toLowerCase().trim();
+  // Convert to string if it's not already (handles numbers, booleans, etc.)
+  const levelStr = typeof level === 'string' ? level : String(level);
+  const normalized = levelStr.toLowerCase().trim();
 
   // Handle "Neutral" as "Average"
   if (normalized === 'neutral') return 'Average';
