@@ -304,7 +304,7 @@ function AdminEditProfileContent() {
 
         {/* Chronotype */}
         <section>
-          <h2 className="text-2xl font-semibold text-foreground mb-4">Chronotype</h2>
+          <h2 className="text-2xl font-semibold mb-4" style={{ color: '#184DDA' }}>Chronotype</h2>
           <ChronotypeSelector
             selected={selectedChronotypes}
             onChange={handlers.handleChronotypeChange}
