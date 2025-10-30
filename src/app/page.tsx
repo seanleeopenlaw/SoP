@@ -80,7 +80,7 @@ export default function Home() {
         <div className="text-center">
           <div className="flex justify-center mb-6">
             <Image
-              src="/logo.svg"
+              src="/logo.png"
               alt="People Profile Logo"
               width={120}
               height={120}
@@ -88,7 +88,7 @@ export default function Home() {
             />
           </div>
           <h1 className="text-4xl font-bold text-foreground mb-2">
-            People Profile
+            Profile
           </h1>
           <p className="text-muted-foreground">
             Enter your email to create or edit your profile

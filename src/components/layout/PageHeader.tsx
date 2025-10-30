@@ -38,7 +38,7 @@ export function PageHeader({
           <div className="flex items-center gap-4 flex-1">
             {showLogo && (
               <Image
-                src="/logo.svg"
+                src="/logo.png"
                 alt={`${title} Logo`}
                 width={60}
                 height={60}

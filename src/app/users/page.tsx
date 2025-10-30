@@ -177,7 +177,7 @@ export default function UsersPage() {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <Image
-              src="/logo.svg"
+              src="/logo.png"
               alt="Team Directory Logo"
               width={60}
               height={60}

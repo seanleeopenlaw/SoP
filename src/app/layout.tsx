@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   title: "People Profile Web App",
   description: "Interactive profile management with custom traits, chronotypes, and values",
   icons: {
-    icon: '/favicon.svg',
+    icon: '/favicon.png',
   },
 };
 
