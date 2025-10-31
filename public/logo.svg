@@ -1,20 +1,54 @@
-<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background -->
-  <rect width="200" height="200" rx="20" fill="#e0e7ff"/>
+<svg width="400" height="500" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="fingerprintGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#FFD700;stop-opacity:1" />
+      <stop offset="20%" style="stop-color:#FFA500;stop-opacity:1" />
+      <stop offset="40%" style="stop-color:#FF6347;stop-opacity:1" />
+      <stop offset="60%" style="stop-color:#9370DB;stop-opacity:1" />
+      <stop offset="80%" style="stop-color:#6A5ACD;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4B0082;stop-opacity:1" />
+    </linearGradient>
+  </defs>
 
-  <!-- Grid lines -->
-  <line x1="100" y1="20" x2="100" y2="180" stroke="#5558e3" stroke-width="2"/>
-  <line x1="20" y1="100" x2="180" y2="100" stroke="#5558e3" stroke-width="2"/>
+  <!-- CoreDrive Text -->
+  <text x="200" y="80" font-family="serif" font-size="52" font-weight="400" text-anchor="middle" fill="#2C3E50">CoreDrive</text>
 
-  <!-- Top Left - Lion (🦁) -->
-  <text x="60" y="75" font-size="48" text-anchor="middle">🦁</text>
+  <!-- Fingerprint Design -->
+  <g transform="translate(200, 300)">
+    <!-- Outer curves -->
+    <path d="M -60,-80 Q -80,-60 -80,-30 Q -80,0 -70,30 Q -60,50 -40,65"
+          fill="none" stroke="url(#fingerprintGradient)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 60,-80 Q 80,-60 80,-30 Q 80,0 70,30 Q 60,50 40,65"
+          fill="none" stroke="url(#fingerprintGradient)" stroke-width="8" stroke-linecap="round"/>
 
-  <!-- Top Right - Bear (🐻) -->
-  <text x="140" y="75" font-size="48" text-anchor="middle">🐻</text>
+    <!-- Middle curves -->
+    <path d="M -40,-70 Q -55,-50 -55,-20 Q -55,10 -45,35 Q -35,50 -20,60"
+          fill="none" stroke="url(#fingerprintGradient)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 40,-70 Q 55,-50 55,-20 Q 55,10 45,35 Q 35,50 20,60"
+          fill="none" stroke="url(#fingerprintGradient)" stroke-width="8" stroke-linecap="round"/>
 
-  <!-- Bottom Left - Wolf (🐺) -->
-  <text x="60" y="155" font-size="48" text-anchor="middle">🐺</text>
+    <!-- Inner curves -->
+    <path d="M -20,-60 Q -30,-40 -30,-10 Q -30,15 -20,35 Q -10,45 0,50"
+          fill="none" stroke="url(#fingerprintGradient)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 20,-60 Q 30,-40 30,-10 Q 30,15 20,35 Q 10,45 0,50"
+          fill="none" stroke="url(#fingerprintGradient)" stroke-width="8" stroke-linecap="round"/>
 
-  <!-- Bottom Right - Dolphin (🐬) -->
-  <text x="140" y="155" font-size="48" text-anchor="middle">🐬</text>
+    <!-- Center curves -->
+    <path d="M -5,-50 Q -10,-30 -10,-5 Q -10,15 -5,30 Q -2,38 0,42"
+          fill="none" stroke="url(#fingerprintGradient)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M 5,-50 Q 10,-30 10,-5 Q 10,15 5,30 Q 2,38 0,42"
+          fill="none" stroke="url(#fingerprintGradient)" stroke-width="8" stroke-linecap="round"/>
+
+    <!-- Additional detail curves -->
+    <path d="M -70,-50 Q -75,-30 -75,0 Q -75,25 -65,45"
+          fill="none" stroke="url(#fingerprintGradient)" stroke-width="7" stroke-linecap="round" opacity="0.8"/>
+    <path d="M 70,-50 Q 75,-30 75,0 Q 75,25 65,45"
+          fill="none" stroke="url(#fingerprintGradient)" stroke-width="7" stroke-linecap="round" opacity="0.8"/>
+
+    <!-- Bottom curves -->
+    <path d="M -30,55 Q -15,65 0,68 Q 15,65 30,55"
+          fill="none" stroke="url(#fingerprintGradient)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M -50,50 Q -25,68 0,72 Q 25,68 50,50"
+          fill="none" stroke="url(#fingerprintGradient)" stroke-width="7" stroke-linecap="round" opacity="0.8"/>
+  </g>
 </svg>
