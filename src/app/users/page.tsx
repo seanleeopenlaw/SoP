@@ -179,8 +179,9 @@ export default function UsersPage() {
             <Image
               src="/logo.png"
               alt="Team Directory Logo"
-              width={60}
-              height={60}
+              width={80}
+              height={80}
+              quality={100}
               priority
             />
             <div>

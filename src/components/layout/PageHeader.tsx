@@ -40,8 +40,9 @@ export function PageHeader({
               <Image
                 src="/logo.png"
                 alt={`${title} Logo`}
-                width={60}
-                height={60}
+                width={80}
+                height={80}
+                quality={100}
                 priority
               />
             )}
